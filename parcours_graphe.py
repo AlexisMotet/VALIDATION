@@ -55,24 +55,25 @@ def parcours_largeur(sommet, marques=[]):
     return marques
 
 
-class Graph():
+class Graph(dict):
     def __init__(self) :
-        self.d = {}
         self.initial = None
 
     def add(self, a, neighbours, initial=False) :
-        self.d[a] = neighbours
+        self[a] = neighbours
         if initial :
-            self.initial = self.d[a]
+            assert self.initial == None
+            self.initial = self[a]
     
     def get(self, a) :
-        return self.d[a]
+        return self[a]
 
     def get_initial(self) :
         return self.initial
 
-
-def bfs(graph, o, on_discovery = lambda source, n, o : None , on_known = lambda source, n, o : None, on_all_discovered = lambda source, o : None):
+def bfs(graph, o, on_discovery = lambda source, n, o : None , 
+                  on_known = lambda source, n, o : None, 
+                  on_all_discovered = lambda source, o : None):
     knowns = set()
     frontier = deque()
     at_start = True
@@ -97,7 +98,7 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None , on_known = lambda 
 if __name__ == "__main__" :
     graph = Graph()
     pere = "a"
-    enfants = ["b", "c", "d"]
+    enfants = ["b", "c", "d"] 
     enfants_b =["e", "f"]
     enfants_c = ["r", "t"]
 
@@ -109,7 +110,21 @@ if __name__ == "__main__" :
     graph.add("f", ["f"])
     graph.add("r", [])
     graph.add("t", ["a"])
-    bfs(graph, "r")
+
+    def basic1(source, n, o):
+        if n is o :
+            print("target trouvée : %s" % n)
+    def basic2(source, o):
+        o[0] += 1
+
+    def nothing1(source, n, o):
+        pass
+
+    def nothing2(source, o):
+        pass
+
+    o = "f"
+    bfs(graph, o, basic1, basic1, nothing2)
 
     """
     a
@@ -120,8 +135,6 @@ if __name__ == "__main__" :
     e f --- f
     
     """
-
-
 
     """
     pere = Noeud(3)
