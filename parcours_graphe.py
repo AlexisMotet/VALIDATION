@@ -102,6 +102,7 @@ class NBits(TransitionRelation):
         neighbours = []
         for i in range(self.n):
             neighbours.append(source ^ (1 << i))
+            
             """
             if source >> i & 1 :
                 child = source & ~(1<<i)
@@ -109,8 +110,50 @@ class NBits(TransitionRelation):
                 child = source | (1<<i)
             """
         return neighbours
+    
+    
+class HanoiConfiguration():
+    def __init__(self, d) :
+        self.d = d
+        for l in d.values() :
+            assert all(l[i] > l[i+1] for i in range(len(l) - 1))
 
+    def __hash__(self):
+        return hash(frozenset(self.d))
+    
+    def __str__(self):
+        return str(self.d)
+    
+    def __repr__(self) :
+        return self.__str__()
+    
+    def __eq__(self, other_config):
+        return self.d == other_config.d
 
+class Hanoi(TransitionRelation):
+    def __init__(self, roots):
+        self.roots = roots
+        
+    def get_roots(self):
+        print(self.roots)
+        return self.roots
+    
+    def next(self, source):
+        childs = []
+        for old in source.d :
+            if len(source.d[old]) == 0:
+                continue
+            for new in source.d :
+                if new == old :
+                    continue
+                if len(source.d[new]) == 0 or source.d[new][-1] > source.d[old][-1] : 
+                    child = HanoiConfiguration({x : [y  for y in source.d[x]] for x in source.d})
+                    child.d[new].append(child.d[old].pop())
+                    childs.append(child)
+        return childs
+    
+    
+    
 def bfs(graph, o, on_discovery = lambda source, n, o : None , 
                   on_known = lambda source, n, o : None, 
                   on_all_discovered = lambda source, o : None):
@@ -121,31 +164,68 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
         source = None
         if at_start :
             neighbours = graph.get_roots()
+            print("neighbours", neighbours)
             at_start = False
         else :
             source = frontier.popleft()
             neighbours = graph.next(source)
         for n in neighbours :
             if n in knowns :
-                on_known(source, n, o)
+                if on_known(source, n, o) :
+                    return knowns, o
                 continue
-            on_discovery(source, n, o) # on decouvre un voisin
+            if on_discovery(source, n, o) : # on decouvre un voisin
+                return knowns, o
             knowns.add(n)
             frontier.append(n)
-        on_all_discovered(source, o)
-    return knowns
+        if on_all_discovered(source, o) :
+            return knowns, o
+    print("fini")
+    return knowns, o
 
 if __name__ == "__main__" :
-    nBits = NBits([0], 16)
+    
+    hanoiConfiguration = HanoiConfiguration({1:[3, 2, 1], 2 : [], 3 : []})
+    
+    hanoi = Hanoi([hanoiConfiguration])
+    
+
+    def look_for_config(source, n, o):
+        if n is not None and \
+            n == HanoiConfiguration(
+                {1:[], 2 : [], 3 : [3, 2, 1]}):
+            return True
+        return False
     
     def basic1(source, n, o):
-        pass
+        return False
     def basic2(source, o):
-        pass
+        return False
+
+    
+    k, o = bfs(hanoi, None, look_for_config, basic1, basic2)  
+    """
+    for c in k :
+        print(c)
+     
+    
+    n = 10
+    nBits = NBits([0], n)
+    print("limit %d" % (2**n - 1))
+    
+    def basic1(source, n, o):
+        return False
+    def look_for_int(source, n, o):
+        if (source == 511):
+            print("trouvé")
+            return True
+        return False
+    def basic2(source, o):
+        return False
     o = None
-    bfs(nBits, o, basic1, basic1, basic2)
+    k, o = bfs(nBits, o, look_for_int, basic1, basic2)
     
-    
+    """
     
     # dictGraph = DictGraph()
     """
