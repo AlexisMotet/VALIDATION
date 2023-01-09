@@ -1,3 +1,4 @@
+from abc import abstractmethod, ABC
 from collections import deque
 """
 graphe = ["x", [["y", []], ["z", [["w", []], ["a", []]]]]]
@@ -70,6 +71,45 @@ class Graph(dict):
 
     def get_initial(self) :
         return self.initial
+    
+    
+class TransitionRelation(ABC) :
+    @abstractmethod
+    def get_roots(self):
+        pass
+    @abstractmethod
+    def next(self, source):
+        pass
+    
+class DictGraph(TransitionRelation):
+    def __init__(self, roots, d):  
+        self.roots = roots
+        self.d = d
+    def get_roots(self):
+        return self.roots
+    
+    def next(self, source):
+        return self.d[source]
+    
+class NBits(TransitionRelation):
+    def __init__(self, roots, n):
+        self.roots = roots
+        self.n = n
+    def get_roots(self):
+        return self.roots
+    
+    def next(self, source):
+        neighbours = []
+        for i in range(self.n):
+            neighbours.append(source ^ (1 << i))
+            """
+            if source >> i & 1 :
+                child = source & ~(1<<i)
+            else :
+                child = source | (1<<i)
+            """
+        return neighbours
+
 
 def bfs(graph, o, on_discovery = lambda source, n, o : None , 
                   on_known = lambda source, n, o : None, 
@@ -80,11 +120,11 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
     while frontier or at_start :
         source = None
         if at_start :
-            neighbours = graph.get_initial()
+            neighbours = graph.get_roots()
             at_start = False
         else :
             source = frontier.popleft()
-            neighbours = graph.get(source)
+            neighbours = graph.next(source)
         for n in neighbours :
             if n in knowns :
                 on_known(source, n, o)
@@ -96,6 +136,19 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
     return knowns
 
 if __name__ == "__main__" :
+    nBits = NBits([0], 16)
+    
+    def basic1(source, n, o):
+        pass
+    def basic2(source, o):
+        pass
+    o = None
+    bfs(nBits, o, basic1, basic1, basic2)
+    
+    
+    
+    # dictGraph = DictGraph()
+    """
     graph = Graph()
     pere = "a"
     enfants = ["b", "c", "d"] 
@@ -125,7 +178,7 @@ if __name__ == "__main__" :
 
     o = "f"
     bfs(graph, o, basic1, basic1, nothing2)
-
+    """
     """
     a
     |
