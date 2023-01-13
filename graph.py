@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from collections import deque
 """
 graphe = ["x", [["y", []], ["z", [["w", []], ["a", []]]]]]
-def parcours_profondeur(graphe):
+def traversal_depth(graphe):
     valeur = graphe[0]
     print(valeur)
     n = len(graphe[1])
@@ -10,49 +10,49 @@ def parcours_profondeur(graphe):
         print("fin")
     else :
         for i in range(n):
-            parcours_profondeur(graphe[1][i])
+            traversal_depth(graphe[1][i])
 
 """
 
-class Noeud :
+class Node :
     def __init__(self, valeur):
         self.valeur = valeur
-        self.enfants = []
-    def ajouterEnfant(self, enfant):
-        self.enfants.append(enfant)
+        self.children = []
+    def addchild(self, child):
+        self.children.append(child)
 
     def __str__(self) :
-        return "Noeud %d" % self.valeur
+        return "Node %d" % self.valeur
 
     def __repr__(self):
         return self.__str__()
 
-def parcours_profondeur(noeud, marques=[], profondeur=0):
-    n = len(noeud.enfants)
+def traversal_depth(Node, marked=[], depth=0):
+    n = len(Node.children)
     """
-    for _ in range(profondeur) :
+    for _ in range(depth) :
         print(" ", end="")
-    print(noeud.valeur)
+    print(Node.valeur)
     """
     if n > 0 :
-        for enfant in noeud.enfants:
-            if enfant not in marques :
-                marques.append(enfant)
-                parcours_profondeur(enfant, marques, profondeur+1)
-    return marques
-            
+        for child in Node.children:
+            if child not in marked :
+                marked.append(child)
+                traversal_depth(child, marked, depth+1)
+    return marked
 
-def parcours_largeur(sommet, marques=[]):
+
+def width_traversal(sommet, marked=[]):
     file = []
     file.insert(0, sommet)
-    marques.append(sommet)
+    marked.append(sommet)
     while len(file) != 0 :
-        noeud = file.pop()
-        for enfant in noeud.enfants :
-            if enfant not in marques :
-                file.insert(0, enfant)
-                marques.append(enfant)
-    return marques
+        Node = file.pop()
+        for child in Node.children :
+            if child not in marked :
+                file.insert(0, child)
+                marked.append(child)
+    return marked
 
 class TransitionRelation(ABC) :
     @abstractmethod
@@ -61,31 +61,31 @@ class TransitionRelation(ABC) :
     @abstractmethod
     def next(self, source):
         pass
-    
+
 class DictGraph(TransitionRelation):
-    def __init__(self, roots, d):  
+    def __init__(self, roots, d):
         self.roots = roots
         self.d = d
     def get_roots(self):
         return self.roots
-    
+
     def next(self, source):
         return self.d[source]
-    
-    
-def bfs(graph, o, on_discovery = lambda source, n, o : None , 
-                  on_known = lambda source, n, o : None, 
+
+
+def bfs(graph, o, on_discovery = lambda source, n, o : None ,
+                  on_known = lambda source, n, o : None,
                   on_all_discovered = lambda source, o : None):
     knowns = set()
-    frontier = deque()
+    border = deque()
     at_start = True
-    while frontier or at_start :
+    while border or at_start :
         source = None
         if at_start :
             neighbours = graph.get_roots()
             at_start = False
         else :
-            source = frontier.popleft()
+            source = border.popleft()
             neighbours = graph.next(source)
         for n in neighbours :
             if n in knowns :
@@ -95,7 +95,7 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
             if on_discovery(source, n, o) : # on decouvre un voisin
                 return knowns, o
             knowns.add(n)
-            frontier.append(n)
+            border.append(n)
         if on_all_discovered(source, o) :
             return knowns, o
     return knowns, o
@@ -124,21 +124,21 @@ if __name__ == "__main__" :
     
     """
 
-    pere = Noeud(3)
-    enfant_pere1 = Noeud(1)
-    enfant_enfant_pere11 = Noeud(10)
-    enfant_enfant_pere12 = Noeud(9)
-    enfant_pere1.ajouterEnfant(enfant_enfant_pere11)
-    enfant_pere1.ajouterEnfant(enfant_enfant_pere12)
-    enfant_pere2 = Noeud(4)
-    enfant_enfant_pere21 = Noeud(4)
-    enfant_enfant_pere22 = Noeud(14)
-    enfant_pere2.ajouterEnfant(enfant_enfant_pere21)
-    enfant_pere2.ajouterEnfant(enfant_enfant_pere22)
-    pere.ajouterEnfant(enfant_pere1)
-    pere.ajouterEnfant(enfant_pere2)
+    dad = Node(3)
+    child_dad1 = Node(1)
+    child_child_dad11 = Node(10)
+    child_child_dad12 = Node(9)
+    child_dad1.addchild(child_child_dad11)
+    child_dad1.addchild(child_child_dad12)
+    child_dad2 = Node(4)
+    child_child_dad21 = Node(4)
+    child_child_dad22 = Node(14)
+    child_dad2.addchild(child_child_dad21)
+    child_dad2.addchild(child_child_dad22)
+    dad.addchild(child_dad1)
+    dad.addchild(child_dad2)
 
-    enfant_enfant_pere21.ajouterEnfant(enfant_enfant_pere22)
+    child_child_dad21.addchild(child_child_dad22)
     """
     Arbre :
         3 _________
@@ -147,6 +147,6 @@ if __name__ == "__main__" :
         |    |   |    |
         10   9   4  - 14
     """
-    # parcours_profondeur(pere)
-    noeuds = parcours_largeur(pere)
-    print(noeuds)
+    # traversal_depth(dad)
+    Nodes = width_traversal(dad)
+    print(Nodes)
