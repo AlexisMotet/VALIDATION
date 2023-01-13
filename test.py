@@ -13,17 +13,7 @@ class TestNoeud(TestCase):
     def test_repr(self):
         self.fail()
 
-    def test_ajouter_enfant(self):
-        self.fail()
-
-class TestGraph(TestCase):
-    def test_add(self):
-        self.fail()
-
-    def test_get(self):
-        self.fail()
-
-    def test_get_initial(self):
+    def test_addchild(self):
         self.fail()
 
 class TestTransitionRelation(TestCase):
@@ -44,10 +34,10 @@ class TestDictGraph(TestCase):
         self.fail()
 
 class TestGraphFunction(TestCase):
-    def test_parcours_largeur(self):
+    def test_width_traversal(self):
         self.fail()
 
-    def test_parcours_profondeur(self):
+    def test_traversal_depth(self):
         self.fail()
 
     def test_bfs(self):
@@ -58,13 +48,13 @@ class TestGraphFunction(TestCase):
 #__NBITS_______________________________________________________________________________
 
 class TestNBits(TestCase):
+    def test_init(self):
+        self.fail()
     def test_get_roots(self):
         self.fail()
 
     def test_next(self):
         self.fail()
-
-
 
 
 #__HANOI_______________________________________________________________________________
@@ -86,6 +76,8 @@ class TestHanoiConfiguration(TestCase):
 
 
 class TestHanoi(TestCase):
+    def test_init(self):
+        self.fail()
     def test_get_roots(self):
         self.fail()
 
