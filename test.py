@@ -3,6 +3,7 @@ from unittest import TestCase
 
 #__GRAPH_______________________________________________________________________________
 from graph import DictGraph
+from nbits import NBits
 
 
 class TestNode(TestCase):
@@ -27,10 +28,10 @@ class TestTransitionRelation(TestCase):
         pass
 
 class TestDictGraph(TestCase):
-    dictGraph = DictGraph(0,{0: [1, 2], 1: [0, 1], 2: [1, 0]})
+    dictGraph = DictGraph([0],{0: [1, 2], 1: [0, 1], 2: [1, 0]})
 
     def test_init(self):
-        assert self.dictGraph.roots == 0
+        assert self.dictGraph.roots == [0]
         assert self.dictGraph.d == {0: [1, 2], 1: [0, 1], 2: [1, 0]}
 
     def test_get_roots(self):
@@ -57,16 +58,20 @@ class TestGraphFunction(TestCase):
 #__NBITS_______________________________________________________________________________
 
 class TestNBits(TestCase):
+
+    def setUp(self):
+        self.nbits = NBits([0], 3)
+
     def test_init(self):
-        self.fail()
+        assert self.nbits.roots == [0]
+        assert self.nbits.n == 3
+
     def test_get_roots(self):
-        #TODO
-        self.fail()
+        assert self.nbits.get_roots() == 0
 
     def test_next(self):
-        #TODO
-        self.fail()
-
+        assert self.nbits.next(0) == [1, 2, 4]
+        assert self.nbits.next(1) == [0, 3, 5]
 
 #__HANOI_______________________________________________________________________________
 class TestHanoiConfiguration(TestCase):
