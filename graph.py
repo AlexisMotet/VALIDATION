@@ -3,8 +3,8 @@ from collections import deque
 """
 graphe = ["x", [["y", []], ["z", [["w", []], ["a", []]]]]]
 def traversal_depth(graphe):
-    valeur = graphe[0]
-    print(valeur)
+    value = graphe[0]
+    print(value)
     n = len(graphe[1])
     if n == 0 :
         print("fin")
@@ -15,14 +15,14 @@ def traversal_depth(graphe):
 """
 
 class Node :
-    def __init__(self, valeur):
-        self.valeur = valeur
+    def __init__(self, value):
+        self.value = value
         self.children = []
     def addchild(self, child):
         self.children.append(child)
 
     def __str__(self) :
-        return "Node %d" % self.valeur
+        return "Node %d" % self.value
 
     def __repr__(self):
         return self.__str__()
@@ -32,7 +32,7 @@ def traversal_depth(Node, marked=[], depth=0):
     """
     for _ in range(depth) :
         print(" ", end="")
-    print(Node.valeur)
+    print(Node.value)
     """
     if n > 0 :
         for child in Node.children:
