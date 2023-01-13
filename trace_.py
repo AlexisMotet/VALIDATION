@@ -1,4 +1,5 @@
 from model import TransitionRelation
+from nbits import NBits
 
 class ParentTraceProxy(TransitionRelation):
     def __init__(self, operand : TransitionRelation, dict : dict):
@@ -29,6 +30,7 @@ class ParentTraceProxy(TransitionRelation):
         for s in reversed(trace):
             print(s)
         print("---------------------------")
+        return trace
                       
         
         
@@ -41,8 +43,15 @@ if __name__ == "__main__" :
     d = {}
     p = ParentTraceProxy(hanoi, d)
     bfs(p, None)
-    p.get_trace(HanoiConfiguration({1: [], 2: [], 3: [3, 2, 1]}))
-    
+    res= p.get_trace(HanoiConfiguration({1: [], 2: [], 3: [3, 2, 1]}))
+    print('res', res)
+
+    nbits = NBits([0], 2)
+    ptp = ParentTraceProxy(nbits, {})
+    bfs(ptp, None)
+    res = ptp.get_trace(1)
+    print('res', res)
+
     """
     d = {0: [1, 2], 
          1: [0, 1], 
