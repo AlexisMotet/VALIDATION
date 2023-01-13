@@ -1,18 +1,5 @@
 from abc import abstractmethod, ABC
 from collections import deque
-"""
-graphe = ["x", [["y", []], ["z", [["w", []], ["a", []]]]]]
-def traversal_depth(graphe):
-    value = graphe[0]
-    print(value)
-    n = len(graphe[1])
-    if n == 0 :
-        print("fin")
-    else :
-        for i in range(n):
-            traversal_depth(graphe[1][i])
-
-"""
 
 class Node :
     def __init__(self, value):
