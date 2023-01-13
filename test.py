@@ -2,46 +2,52 @@ from unittest import TestCase
 
 
 #__GRAPH_______________________________________________________________________________
-from graph import DictGraph
+from graph import DictGraph, Node
 from hanoi import HanoiConfiguration, Hanoi
 from nbits import NBits
 
 
 class TestNode(TestCase):
+    def setUp(self):
+        self.dad = Node(3)
+        self.child_dad = Node(1)
 
     def test_init(self):
-        self.fail()
+        assert self.dad.value == 3
+        assert self.dad.children == []
 
     def test_str(self):
-        self.fail()
+        assert str(self.dad) == "Node 3"
 
     def test_repr(self):
-        self.fail()
+        assert repr(self.dad) == "Node 3"
 
     def test_addchild(self):
-        self.fail()
+        self.dad.addchild(self.child_dad)
+        assert self.dad.children == [self.child_dad]
 
 class TestTransitionRelation(TestCase):
     def test_get_roots(self):
-        pass
+     pass
 
     def test_next(self):
-        pass
+     pass
 
 class TestDictGraph(TestCase):
-    dictGraph = DictGraph([0],{0: [1, 2], 1: [0, 1], 2: [1, 0]})
+    def setUp(self):
+        self.dictGraph = DictGraph([0],{0: [1, 2], 1: [0, 1], 2: [1, 0]})
 
     def test_init(self):
-        assert self.dictGraph.roots == [0]
-        assert self.dictGraph.d == {0: [1, 2], 1: [0, 1], 2: [1, 0]}
+     assert self.dictGraph.roots == [0]
+     assert self.dictGraph.d == {0: [1, 2], 1: [0, 1], 2: [1, 0]}
 
     def test_get_roots(self):
-        assert self.dictGraph.get_roots() == 0
+     assert self.dictGraph.get_roots() == 0
 
     def test_next(self):
-        assert self.dictGraph.next(0) == [1, 2]
-        assert self.dictGraph.next(1) == [0, 1]
-        assert self.dictGraph.next(2) == [1, 0]
+     assert self.dictGraph.next(0) == [1, 2]
+     assert self.dictGraph.next(1) == [0, 1]
+     assert self.dictGraph.next(2) == [1, 0]
 
 class TestGraphFunction(TestCase):
     def test_width_traversal(self):
