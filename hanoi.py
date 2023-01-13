@@ -48,10 +48,14 @@ if __name__ == '__main__':
     hanoi = Hanoi([hanoiConfiguration])
 
     def look_for_config(source, n, o):
+
         if n is not None and \
                 n == HanoiConfiguration(
             {1: [], 2: [], 3: [3, 2, 1]}):
+            print("Node Found : ", n)
             return True
+        else:
+            print("Node Discovered : ", n)
         return False
 
 
@@ -64,6 +68,3 @@ if __name__ == '__main__':
 
 
     k, o = bfs(hanoi, None, look_for_config, basic1, basic2)
-
-    for c in k :
-        print(c)
