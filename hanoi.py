@@ -1,6 +1,5 @@
 from graph import TransitionRelation, bfs
 
-
 class HanoiConfiguration():
     def __init__(self, d):
         self.d = d

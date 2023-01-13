@@ -1,4 +1,4 @@
-from abc import abstractmethod, ABC
+from model import TransitionRelation
 from collections import deque
 
 class Node :
@@ -41,13 +41,7 @@ def width_traversal(sommet, marked=[]):
                 marked.append(child)
     return marked
 
-class TransitionRelation(ABC) :
-    @abstractmethod
-    def get_roots(self):
-        pass
-    @abstractmethod
-    def next(self, source):
-        pass
+
 
 class DictGraph(TransitionRelation):
     def __init__(self, roots, d):
@@ -60,9 +54,9 @@ class DictGraph(TransitionRelation):
         return self.d[source]
 
 
-def bfs(graph, o, on_discovery = lambda source, n, o : None ,
-                  on_known = lambda source, n, o : None,
-                  on_all_discovered = lambda source, o : None):
+def bfs(graph, o, on_discovery = lambda source, n, o : False,
+                  on_known = lambda source, n, o : False,
+                  on_all_discovered = lambda source, o : False):
     knowns = set()
     border = deque()
     at_start = True
