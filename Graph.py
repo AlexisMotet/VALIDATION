@@ -91,68 +91,6 @@ class DictGraph(TransitionRelation):
     def next(self, source):
         return self.d[source]
     
-class NBits(TransitionRelation):
-    def __init__(self, roots, n):
-        self.roots = roots
-        self.n = n
-    def get_roots(self):
-        return self.roots
-    
-    def next(self, source):
-        neighbours = []
-        for i in range(self.n):
-            neighbours.append(source ^ (1 << i))
-            
-            """
-            if source >> i & 1 :
-                child = source & ~(1<<i)
-            else :
-                child = source | (1<<i)
-            """
-        return neighbours
-    
-    
-class HanoiConfiguration():
-    def __init__(self, d) :
-        self.d = d
-        for l in d.values() :
-            assert all(l[i] > l[i+1] for i in range(len(l) - 1))
-
-    def __hash__(self):
-        return hash(frozenset(self.d))
-    
-    def __str__(self):
-        return str(self.d)
-    
-    def __repr__(self) :
-        return self.__str__()
-    
-    def __eq__(self, other_config):
-        return self.d == other_config.d
-
-class Hanoi(TransitionRelation):
-    def __init__(self, roots):
-        self.roots = roots
-        
-    def get_roots(self):
-        print(self.roots)
-        return self.roots
-    
-    def next(self, source):
-        childs = []
-        for old in source.d :
-            if len(source.d[old]) == 0:
-                continue
-            for new in source.d :
-                if new == old :
-                    continue
-                if len(source.d[new]) == 0 or source.d[new][-1] > source.d[old][-1] : 
-                    child = HanoiConfiguration({x : [y  for y in source.d[x]] for x in source.d})
-                    child.d[new].append(child.d[old].pop())
-                    childs.append(child)
-        return childs
-    
-    
     
 def bfs(graph, o, on_discovery = lambda source, n, o : None , 
                   on_known = lambda source, n, o : None, 
@@ -164,7 +102,6 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
         source = None
         if at_start :
             neighbours = graph.get_roots()
-            print("neighbours", neighbours)
             at_start = False
         else :
             source = frontier.popleft()
@@ -203,7 +140,7 @@ if __name__ == "__main__" :
         return False
 
     
-    k, o = bfs(hanoi, None, look_for_config, basic1, basic2)  
+    k, o = bfs(hanoi, None, look_for_config, basic1, basic2)
     """
     for c in k :
         print(c)
