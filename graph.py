@@ -48,31 +48,12 @@ def parcours_largeur(sommet, marques=[]):
     marques.append(sommet)
     while len(file) != 0 :
         noeud = file.pop()
-        # print(noeud.valeur)
         for enfant in noeud.enfants :
             if enfant not in marques :
                 file.insert(0, enfant)
                 marques.append(enfant)
     return marques
 
-
-class Graph(dict):
-    def __init__(self) :
-        self.initial = None
-
-    def add(self, a, neighbours, initial=False) :
-        self[a] = neighbours
-        if initial :
-            assert self.initial == None
-            self.initial = self[a]
-    
-    def get(self, a) :
-        return self[a]
-
-    def get_initial(self) :
-        return self.initial
-    
-    
 class TransitionRelation(ABC) :
     @abstractmethod
     def get_roots(self):
@@ -117,25 +98,9 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
             frontier.append(n)
         if on_all_discovered(source, o) :
             return knowns, o
-    print("fini")
     return knowns, o
 
 if __name__ == "__main__" :
-
-    graph = Graph()
-    pere = "a"
-    enfants = ["b", "c", "d"] 
-    enfants_b =["e", "f"]
-    enfants_c = ["r", "t"]
-
-    graph.add("a", enfants, initial=True)
-    graph.add("b", enfants_b)
-    graph.add("c", enfants_c)
-    graph.add("d", [])
-    graph.add("e", [])
-    graph.add("f", ["f"])
-    graph.add("r", [])
-    graph.add("t", ["a"])
 
     def basic1(source, n, o):
         if n is o :
@@ -149,8 +114,6 @@ if __name__ == "__main__" :
     def nothing2(source, o):
         pass
 
-    o = "f"
-    bfs(graph, o, basic1, basic1, nothing2)
     """
     a
     |
