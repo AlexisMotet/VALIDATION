@@ -121,51 +121,7 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
     return knowns, o
 
 if __name__ == "__main__" :
-    
-    hanoiConfiguration = HanoiConfiguration({1:[3, 2, 1], 2 : [], 3 : []})
-    
-    hanoi = Hanoi([hanoiConfiguration])
-    
 
-    def look_for_config(source, n, o):
-        if n is not None and \
-            n == HanoiConfiguration(
-                {1:[], 2 : [], 3 : [3, 2, 1]}):
-            return True
-        return False
-    
-    def basic1(source, n, o):
-        return False
-    def basic2(source, o):
-        return False
-
-    
-    k, o = bfs(hanoi, None, look_for_config, basic1, basic2)
-    """
-    for c in k :
-        print(c)
-     
-    
-    n = 10
-    nBits = NBits([0], n)
-    print("limit %d" % (2**n - 1))
-    
-    def basic1(source, n, o):
-        return False
-    def look_for_int(source, n, o):
-        if (source == 511):
-            print("trouvé")
-            return True
-        return False
-    def basic2(source, o):
-        return False
-    o = None
-    k, o = bfs(nBits, o, look_for_int, basic1, basic2)
-    
-    """
-    
-    # dictGraph = DictGraph()
-    """
     graph = Graph()
     pere = "a"
     enfants = ["b", "c", "d"] 
@@ -196,7 +152,6 @@ if __name__ == "__main__" :
     o = "f"
     bfs(graph, o, basic1, basic1, nothing2)
     """
-    """
     a
     |
     b c d
@@ -206,7 +161,6 @@ if __name__ == "__main__" :
     
     """
 
-    """
     pere = Noeud(3)
     enfant_pere1 = Noeud(1)
     enfant_enfant_pere11 = Noeud(10)
@@ -222,15 +176,14 @@ if __name__ == "__main__" :
     pere.ajouterEnfant(enfant_pere2)
 
     enfant_enfant_pere21.ajouterEnfant(enfant_enfant_pere22)
-
+    """
     Arbre :
         3 _________
         |          |
         1 ___      4
         |    |   |    |
         10   9   4  - 14
-
+    """
     # parcours_profondeur(pere)
     noeuds = parcours_largeur(pere)
     print(noeuds)
-    """

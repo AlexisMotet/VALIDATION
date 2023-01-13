@@ -1,4 +1,4 @@
-from Graph import TransitionRelation
+from graph import TransitionRelation, bfs
 
 
 class HanoiConfiguration():
@@ -40,3 +40,30 @@ class Hanoi(TransitionRelation):
                     child.d[new].append(child.d[old].pop())
                     childs.append(child)
         return childs
+
+if __name__ == '__main__':
+
+    hanoiConfiguration = HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})
+
+    hanoi = Hanoi([hanoiConfiguration])
+
+    def look_for_config(source, n, o):
+        if n is not None and \
+                n == HanoiConfiguration(
+            {1: [], 2: [], 3: [3, 2, 1]}):
+            return True
+        return False
+
+
+    def basic1(source, n, o):
+        return False
+
+
+    def basic2(source, o):
+        return False
+
+
+    k, o = bfs(hanoi, None, look_for_config, basic1, basic2)
+
+    for c in k :
+        print(c)
