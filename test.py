@@ -3,6 +3,7 @@ from unittest import TestCase
 
 #__GRAPH_______________________________________________________________________________
 from graph import DictGraph
+from hanoi import HanoiConfiguration, Hanoi
 from nbits import NBits
 
 
@@ -92,12 +93,19 @@ class TestHanoiConfiguration(TestCase):
 
 
 class TestHanoi(TestCase):
+    def setUp(self) -> None:
+        self.hanoiConfiguration = HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})
+        self.hanoi = Hanoi([self.hanoiConfiguration])
+
     def test_init(self):
-        self.fail()
+        assert self.hanoi.roots == [self.hanoiConfiguration]
+
     def test_get_roots(self):
-        self.fail()
+        assert self.hanoi.get_roots() == [self.hanoiConfiguration]
 
     def test_next(self):
-        #TODO
-        self.fail()
+        for hanoiConfiguration in self.hanoi.next(HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})):
+            assert hanoiConfiguration in [HanoiConfiguration({1: [3, 2], 2: [1], 3: []}), HanoiConfiguration({1: [3, 2], 2: [], 3: [1]})]
 
+        for hanoiConfiguration in self.hanoi.next(HanoiConfiguration({1: [3, 2], 2: [1], 3: []})):
+            assert hanoiConfiguration in [HanoiConfiguration({1: [3], 2: [1], 3: [2]}), HanoiConfiguration({1: [3, 2], 2: [], 3: [1]}), HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})]
