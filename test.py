@@ -2,8 +2,11 @@ from unittest import TestCase
 
 
 #__GRAPH_______________________________________________________________________________
+from graph import DictGraph
 
-class TestNoeud(TestCase):
+
+class TestNode(TestCase):
+
     def test_init(self):
         self.fail()
 
@@ -18,20 +21,25 @@ class TestNoeud(TestCase):
 
 class TestTransitionRelation(TestCase):
     def test_get_roots(self):
-        self.fail()
+        pass
 
     def test_next(self):
-        self.fail()
+        pass
 
 class TestDictGraph(TestCase):
+    dictGraph = DictGraph(0,{0: [1, 2], 1: [0, 1], 2: [1, 0]})
+
     def test_init(self):
-        self.fail()
+        assert self.dictGraph.roots == 0
+        assert self.dictGraph.d == {0: [1, 2], 1: [0, 1], 2: [1, 0]}
 
     def test_get_roots(self):
-        self.fail()
+        assert self.dictGraph.get_roots() == 0
 
     def test_next(self):
-        self.fail()
+        assert self.dictGraph.next(0) == [1, 2]
+        assert self.dictGraph.next(1) == [0, 1]
+        assert self.dictGraph.next(2) == [1, 0]
 
 class TestGraphFunction(TestCase):
     def test_width_traversal(self):
@@ -41,6 +49,7 @@ class TestGraphFunction(TestCase):
         self.fail()
 
     def test_bfs(self):
+        #TODO
         self.fail()
 
 
@@ -51,9 +60,11 @@ class TestNBits(TestCase):
     def test_init(self):
         self.fail()
     def test_get_roots(self):
+        #TODO
         self.fail()
 
     def test_next(self):
+        #TODO
         self.fail()
 
 
@@ -82,5 +93,6 @@ class TestHanoi(TestCase):
         self.fail()
 
     def test_next(self):
+        #TODO
         self.fail()
 
