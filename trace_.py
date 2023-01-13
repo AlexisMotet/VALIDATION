@@ -1,5 +1,4 @@
 from model import TransitionRelation
-from graph import DictGraph, bfs
 
 class ParentTraceProxy(TransitionRelation):
     def __init__(self, operand : TransitionRelation, dict : dict):
@@ -10,7 +9,7 @@ class ParentTraceProxy(TransitionRelation):
     def get_roots(self):
         roots = self.operand.get_roots()
         for root in roots :
-            self.dict[root] = {None}
+            self.dict[root] = {}
         return roots
         
     def next(self, source):
@@ -21,16 +20,29 @@ class ParentTraceProxy(TransitionRelation):
         return neighbours
     
     def get_trace(self, target):
-        print("---------- TRACE ----------")
+        trace = []
         while target :
             parent = self.dict[target]
-            print("Le Noeud %s a pour parent le Noeud %s" % (str(target), str(parent)))  
+            trace.append("Le Noeud %s mene au Noeud %s" % (str(parent), str(target)))
             target = parent
+        print("---------- TRACE ----------")
+        for s in reversed(trace):
+            print(s)
         print("---------------------------")
                       
         
         
 if __name__ == "__main__" :
+    from graph import bfs
+    from hanoi import Hanoi, HanoiConfiguration
+    hanoiConfiguration = HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})
+
+    hanoi = Hanoi([hanoiConfiguration])
+    d = {}
+    p = ParentTraceProxy(hanoi, d)
+    bfs(p, None)
+    p.get_trace(HanoiConfiguration({1: [], 2: [], 3: [3, 2, 1]}))
+    
     """
     d = {0: [1, 2], 
          1: [0, 1], 
