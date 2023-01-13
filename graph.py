@@ -1,18 +1,5 @@
 from abc import abstractmethod, ABC
 from collections import deque
-"""
-graphe = ["x", [["y", []], ["z", [["w", []], ["a", []]]]]]
-def traversal_depth(graphe):
-    value = graphe[0]
-    print(value)
-    n = len(graphe[1])
-    if n == 0 :
-        print("fin")
-    else :
-        for i in range(n):
-            traversal_depth(graphe[1][i])
-
-"""
 
 class Node :
     def __init__(self, value):
@@ -92,9 +79,9 @@ def bfs(graph, o, on_discovery = lambda source, n, o : None ,
                 if on_known(source, n, o) :
                     return knowns, o
                 continue
+            knowns.add(n)
             if on_discovery(source, n, o) : # on decouvre un voisin
                 return knowns, o
-            knowns.add(n)
             border.append(n)
         if on_all_discovered(source, o) :
             return knowns, o
