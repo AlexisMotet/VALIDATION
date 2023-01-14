@@ -1,7 +1,7 @@
-from graph import TransitionRelation, bfs
+from graph import TransitionRelation
 
 class HanoiConfiguration():
-    def __init__(self, d):
+    def __init__(self, d : dict):
         self.d = d
         for l in d.values():
             assert all(l[i] > l[i + 1] for i in range(len(l) - 1))
@@ -23,10 +23,9 @@ class Hanoi(TransitionRelation):
         self.roots = roots
 
     def get_roots(self):
-        print(self.roots)
         return self.roots
 
-    def next(self, source):
+    def next(self, source : HanoiConfiguration):
         childs = []
         for old in source.d:
             if len(source.d[old]) == 0:
@@ -39,31 +38,3 @@ class Hanoi(TransitionRelation):
                     child.d[new].append(child.d[old].pop())
                     childs.append(child)
         return childs
-
-if __name__ == '__main__':
-
-    hanoiConfiguration = HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})
-
-    hanoi = Hanoi([hanoiConfiguration])
-
-    def look_for_config(source, n, o):
-
-        if n is not None and \
-                n == HanoiConfiguration(
-            {1: [], 2: [], 3: [3, 2, 1]}):
-            print("Node Found : ", n)
-            return True
-        else:
-            print("Node Discovered : ", n)
-        return False
-
-
-    def basic1(source, n, o):
-        return False
-
-
-    def basic2(source, o):
-        return False
-
-
-    k, o = bfs(hanoi, None, look_for_config, basic1, basic2)
