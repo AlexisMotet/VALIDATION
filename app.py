@@ -221,12 +221,19 @@ class Worker(QObject):
         painter_widget.update()
         QTest.qWait(600)
         
+    @staticmethod
+    def on_known(source, n, painter_widget):
+        n.level += 1
+        painter_widget.update()
+        QTest.qWait(600)
+        
     def run(self, painter_widget):
         graph = painter_widget.graph
         roots = painter_widget.roots
         dict_graph = DictGraph(roots, graph)
         try : 
-            dict_graph.bfs(painter_widget, Worker.on_discovery)
+            dict_graph.bfs(painter_widget, on_discovery=Worker.on_discovery, 
+                                           on_known=Worker.on_known)
         except KeyError:
             pass
         while True:
