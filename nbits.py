@@ -13,11 +13,4 @@ class NBits(TransitionRelation):
         neighbours = []
         for i in range(self.n):
             neighbours.append(source ^ (1 << i))
-
-            """
-            if source >> i & 1 :
-                child = source & ~(1<<i)
-            else :
-                child = source | (1<<i)
-            """
         return neighbours

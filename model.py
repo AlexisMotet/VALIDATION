@@ -1,13 +1,17 @@
 from abc import abstractmethod, ABC
 from collections import deque
 
+class Config(ABC) :
+    @abstractmethod
+    def __hash__(self) : pass
+    @abstractmethod
+    def __eq__(self) : pass
+    
 class TransitionRelation(ABC) :
     @abstractmethod
-    def get_roots(self):
-        pass
+    def get_roots(self): pass
     @abstractmethod
-    def next(self, source):
-        pass
+    def next(self, source): pass
 
     def bfs(self, o, on_discovery = lambda source, n, o : False,
                   on_known = lambda source, n, o : False,

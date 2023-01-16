@@ -1,6 +1,7 @@
 from graph import TransitionRelation
+from model import Config
 
-class HanoiConfiguration():
+class HanoiConfiguration(Config):
     def __init__(self, d : dict):
         self.d = d
         for l in d.values():
