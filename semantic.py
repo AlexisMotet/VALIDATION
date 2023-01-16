@@ -8,7 +8,7 @@ from model import Config
 class SemanticTransitionRelation(ABC):
     @abstractmethod
     def initial_configurations(self): pass
-    
+
     @abstractmethod
     def enabled_rules(self, source) : pass
     
@@ -47,6 +47,7 @@ class RuleLambda(RuleAbstract):
     def __init__(self, name, guard, action):
         super().__init__(name, guard)
         self.action = action
+
 
     def execute(self, config):
         return [self.action(config)]
@@ -118,13 +119,15 @@ class SoupProgram():
     def __init__(self, init):
         self.init = init
         self.rules = []
-    def add(self, rule) : 
+
+    def add(self, rule):
         self.rules.append(rule)
-    
+
+
 class SoupSemantic(SemanticTransitionRelation):
     def __init__(self, program):
         self.program = program
-        
+
     def initial_configurations(self):
         return [self.program.init]
     
