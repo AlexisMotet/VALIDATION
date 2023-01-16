@@ -4,7 +4,6 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtTest import *
 from graph import DictGraph
-import random 
 import numpy as np
 # https://www.thomaspietrzak.com/teaching/IHM/pyqt2.pdf
 
@@ -85,12 +84,26 @@ class PainterWidget(QWidget):
         self.rotation_right = np.array(((cos, -sin), (sin, cos)))
         self.rotation_left = np.array(((cos, sin), (-sin, cos)))
         
+    def draw_arrow(self, painter, x, y, xn, yn, offset=False):
+        painter.drawLine(x, y, xn, yn)
+        vec = np.array((x - xn, y - yn))
+        vec_u = vec/np.linalg.norm(vec) if np.linalg.norm(vec) != 0 else vec
+        point_source = np.array((xn, yn))
+        if offset : point_source = point_source + vec_u * Node.radius
+        # https://stackoverflow.com/questions/52868835/im-getting-a-typeerror-for-a-b-but-not-b-a-numpy
+        vec_u_right = vec_u@self.rotation_right
+        point_right = np.array((xn, yn)) + vec_u_right * self.arrow_length * Node.radius
+        vec_u_left = vec_u@self.rotation_left
+        point_left = np.array((xn, yn)) + vec_u_left * self.arrow_length * Node.radius
+        painter.drawLine(QPointF(*point_source), QPointF(*point_left))
+        painter.drawLine(QPointF(*point_source), QPointF(*point_right))
+        
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.fillRect(self.rect(), Qt.GlobalColor.white)
         if self.source and self.pos :
             x_center, y_center = self.source.get_center()
-            painter.drawLine(self.pos.x(), self.pos.y(), x_center, y_center)
+            self.draw_arrow(painter, x_center, y_center, self.pos.x(), self.pos.y())
         if self.draw_node and self.pos :
             x, y = self.pos.x() - Node.radius, self.pos.y() - Node.radius
             index = len(self.graph)
@@ -113,18 +126,9 @@ class PainterWidget(QWidget):
                      for (node, neighbours) in graph.items()}
         for (node, neighbours) in graph.items():
             for n in neighbours :
-                xn, yn = n.get_center()
                 x, y = node.get_center()
-                painter.drawLine(x, y, xn, yn)
-                vec = np.array((x - xn, y - yn))
-                vec_u = vec/np.linalg.norm(vec)
-                point_source = np.array((xn, yn)) + vec_u * Node.radius
-                vec_u_right = vec_u@self.rotation_right
-                point_right = np.array((xn, yn)) + vec_u_right * self.arrow_length * Node.radius
-                vec_u_left = vec_u@self.rotation_left
-                point_left = np.array((xn, yn)) + vec_u_left * self.arrow_length * Node.radius
-                painter.drawLine(QPointF(*point_source), QPointF(*point_left))
-                painter.drawLine(QPointF(*point_source), QPointF(*point_right))
+                xn, yn = n.get_center()
+                self.draw_arrow(painter, x, y, xn, yn, offset=True)
         for node in graph :
             node.draw(painter)
             if node in self.roots :
@@ -224,13 +228,16 @@ class Worker(QObject):
         try : 
             dict_graph.bfs(painter_widget, Worker.on_discovery)
         except KeyError:
-            print("Supprimer des noeuds ou a enlever les racines" 
-                  "pendant le parcours n'est pas une bonne idee")
             pass
-        for node in graph:
-            node.level = 0
-            painter_widget.update()
-            QTest.qWait(100)
+        while True:
+            try :
+                for node in graph:
+                    node.level = 0
+                    painter_widget.update()
+                    QTest.qWait(100)
+                break    
+            except RuntimeError:
+                pass
         self.finished.emit()
     
 class MainWindow(QMainWindow):
