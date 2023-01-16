@@ -14,8 +14,6 @@ class SemanticTransitionRelation(ABC):
 
 class Rule():
     def __init__(self, name, guard , action):
-        assert isinstance(guard, type(lambda x : x)), f"Expected x to be of type Function but got {type(guard)}"
-        assert isinstance(action, type(lambda x : x)), f"Expected x to be of type Function but got {type(action)}"
 
         self.name = name
         self.guard = guard
@@ -51,7 +49,3 @@ class SoupSemantic(SemanticTransitionRelation):
     def execute(self, rule, source):
         new_source = source.copy()
         return rule.execute(new_source)
-
-
-if __name__ == '__main__':
-    testRule3 = Rule("test3", lambda x: x, lambda x: x)
