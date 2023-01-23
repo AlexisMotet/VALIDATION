@@ -1,10 +1,8 @@
+from abc import abstractmethod, ABC
 
-from config import *
 from model import TransitionRelation
 from copy import copy
 from enum import Enum
-from model import Config
-from rules import *
 
 
 class SemanticTransitionRelation(ABC):
@@ -87,30 +85,4 @@ class SoupSemantic(SemanticTransitionRelation):
         new_source = copy(source)
         return [rule.execute(new_source)]
 
-
-if __name__ == "__main__":
-    config_start = AliceAndBobConfig(Etat.HOME, Etat.HOME)
-    program = SoupProgram(config_start)
-    program.add(RuleAliceToGarden())
-    program.add(RuleAliceToHome())
-    program.add(RuleAliceToIntermediate())
-    program.add(RuleBobToGarden())
-    program.add(RuleBobToHome())
-    program.add(RuleBobToIntermediate())
-    soup_semantic = SoupSemantic(program)
-    str2tr = STR2TR(soup_semantic)
-
-    from trace_ import ParentTraceProxy
-    d = {}
-    p = ParentTraceProxy(str2tr, d)
-    def on_discovery(source, n, o) :
-        res = n.alice == Etat.GARDEN and n.bob == Etat.GARDEN
-        o.append(n)
-        # if res : o[0] = n
-        return res
-    
-    o = [None]
-    p.bfs(o, on_discovery=on_discovery)
-    print(o)
-    res= p.get_trace(o[-1])
 
