@@ -2,8 +2,6 @@ from abc import abstractmethod, ABC
 
 from model import TransitionRelation
 from copy import copy
-from enum import Enum
-
 
 class SemanticTransitionRelation(ABC):
     @abstractmethod
@@ -55,12 +53,6 @@ class RuleLambda(RuleAbstract):
 
     def execute(self, config):
         return [self.action(config)]
-
-
-class Etat(Enum):
-    HOME = 0
-    GARDEN = 1
-    INTERMEDIATE = 2
 
 class SoupProgram():
     def __init__(self, init):
