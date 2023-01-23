@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 from model import TransitionRelation
-from copy import copy
+from copy import deepcopy
 from model import Config
 
 
@@ -32,6 +32,7 @@ class RuleAbstract(ABC):
     def __init__(self, name, guard):
         self.name = name
         self.guard = guard
+        
     @abstractmethod
     def execute(self, config): pass
         
@@ -45,14 +46,16 @@ class RuleLambda(RuleAbstract):
     def __init__(self, name, guard, action):
         super().__init__(name, guard)
         self.action = action
-
-
     def execute(self, config):
         return [self.action(config)]
     
 class SoupConfig(Config):
     @abstractmethod
     def __copy__(self): 
+        pass
+    
+    @abstractmethod
+    def __deepcopy__(self, memo=None): 
         pass
     
     @abstractmethod
@@ -80,6 +83,5 @@ class SoupSemantic(SemanticTransitionRelation):
         return [rule for rule in self.program.rules if rule.guard(source)]
     
     def execute(self, rule, source):
-        new_source = copy(source)
+        new_source = deepcopy(source)
         return [rule.execute(new_source)]
-        

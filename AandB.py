@@ -1,6 +1,6 @@
 from enum import Enum
 from semantic import RuleAbstract
-from copy import copy
+from copy import copy, deepcopy
 from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
 
 class Etat(Enum):
@@ -14,7 +14,11 @@ class AliceAndBobConfig(SoupConfig):
         
     def __copy__(self):
         return AliceAndBobConfig(copy(self.alice),
-                           copy(self.bob))
+                                 copy(self.bob))
+        
+    def __deepcopy__(self, memo=None):
+        return AliceAndBobConfig(deepcopy(self.alice, memo),
+                           deepcopy(self.bob, memo))
     def __str__(self):
         return "Config : {Alice %s - Bob %s}" % (self.alice, self.bob)
     

@@ -1,6 +1,6 @@
 from enum import Enum
 from semantic import RuleAbstract
-from copy import copy
+from copy import copy, deepcopy
 from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
 
 
@@ -15,12 +15,16 @@ class AliceAndBobConfig(SoupConfig):
         self.bob = bob
         self.flag_alice = flag_alice
         self.flag_bob = flag_bob
-        
+    
     def __copy__(self):
         return AliceAndBobConfig(copy(self.alice),
-                                 copy(self.bob),
-                                 copy(self.flag_alice),
-                                 copy(self.flag_bob))
+                                 copy(self.bob))
+        
+    def __deepcopy__(self, memo):
+        return AliceAndBobConfig(deepcopy(self.alice, memo),
+                                 deepcopy(self.bob, memo),
+                                 deepcopy(self.flag_alice, memo),
+                                 deepcopy(self.flag_bob, memo))
     def __str__(self):
         return "[Alice %s Flag %s - Bob %s Flag %s]" % (self.alice, 
                                                                  self.flag_alice,
