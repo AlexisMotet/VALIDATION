@@ -13,7 +13,7 @@ class TransitionRelation(ABC) :
     @abstractmethod
     def next(self, source): pass
 
-    def bfs(self, o, on_discovery = lambda source, n, o : False,
+    def bfs(self, o=None, on_discovery = lambda source, n, o : False,
                   on_known = lambda source, n, o : False,
                   on_all_discovered = lambda source, o : False):
         knowns = set()

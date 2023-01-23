@@ -21,10 +21,10 @@ class STR2TR(TransitionRelation):
         return self.semantic.initial_configurations()
     def next(self, source):
         enabled_rules = self.semantic.enabled_rules(source)
-        new_rules = []
+        new_configs = []
         for rule in enabled_rules:
-            new_rules += self.semantic.execute(rule, source)
-        return new_rules
+            new_configs += self.semantic.execute(rule, source)
+        return new_configs
         # retourne les nouvelles configs
 
 class RuleAbstract(ABC):
@@ -42,13 +42,23 @@ class RuleAbstract(ABC):
     def __repr__(self):
         return self.name
     
+
 class RuleLambda(RuleAbstract):
     def __init__(self, name, guard, action):
         super().__init__(name, guard)
         self.action = action
     def execute(self, config):
-        return [self.action(config)]
+        self.action(config)
+        return [config]
     
+    
+class Stutter(RuleAbstract):
+    def __init__(self):
+        super().__init__(None, None)
+    
+    def execute(self, config):
+        return [config]
+        
 class SoupConfig(Config):
     @abstractmethod
     def __copy__(self): 
@@ -83,5 +93,6 @@ class SoupSemantic(SemanticTransitionRelation):
         return [rule for rule in self.program.rules if rule.guard(source)]
     
     def execute(self, rule, source):
-        new_source = deepcopy(source)
-        return [rule.execute(new_source)]
+        target = deepcopy(source)
+        rule.execute(target)
+        return [target]
