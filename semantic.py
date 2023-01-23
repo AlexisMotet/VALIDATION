@@ -112,3 +112,77 @@ class AliceAndBobConfig(SoupConfig):
     def __hash__(self):
         return hash(frozenset([self.alice, self.bob]))
 
+class InputSemTransRelation (SemanticTransitionRelation):
+    def initial_configurations(self):
+        pass
+    def enabled_rules(self, model, source):
+        pass
+    def execute(self, rule, model, source):
+        pass
+
+class InputSoupSemantics (InputSemTransRelation):
+    def __init__(self, program):
+        self.program = program
+
+    def initial_configurations(self):
+        return [self.program.init]
+
+    def enabled_rules(self, model, source):
+        filter(lambda rule: rule.guard(model, source), self.program.rules)
+
+    def execute(self, rule, model, source):
+        new_source = copy.deepcopy(source)
+        n = rule.execute(model, new_source)
+        return [new_source]
+
+class AbstractStep:
+    pass
+
+class MaybeStutter(AbstractStep):
+    pass
+
+class StutterStep(AbstractStep):
+    pass
+
+class Step(AbstractStep):
+    def __init__(self, source, rule, target):
+        self.source = source
+        self.rule = rule
+        self.target = target
+
+class Rule(MaybeStutter):
+    def __init__(self, rule):
+        self.rule = rule
+
+class StepSynchronousProduct(SemanticTransitionRelation):
+
+    def __init__(self, lhs, rhs):
+        self.lhs = lhs
+        self.rhs = rhs
+
+    def initial_configurations(self):
+        return [(lhs_init, rhs_init) for lhs_init in self.lhs.initial_configurations() for rhs_init in self.rhs.initial_configurations()]
+
+    def enabled_rules(self, source):
+        lhs_source, rhs_source = source
+        syncA = []
+        lhs_enA = self.lhs.enabled_rules(lhs_source)
+        numRules = len(lhs_enA)
+        for la in lhs_enA:
+            lTarget = self.lhs.execute(la, lhs_source)
+            if len(lTarget) == 0:
+                numRules -= 1
+            for lt in lTarget:
+                step = Step(lhs_source, Rule(la), lt)
+                rhs_enA = self.rhs.enabled_rules(step, rhs_source)
+                syncA.extend(map(lambda ra: (step, ra), rhs_enA))
+            if numRules == 0:
+                step = Step(lhs_source, StutterStep(), lhs_source)
+                rhs_enA = self.rhs.enabled_rules(step, rhs_source)
+                syncA.extend(map(lambda ra: (step, ra), rhs_enA))
+
+        return syncA
+
+
+
+
