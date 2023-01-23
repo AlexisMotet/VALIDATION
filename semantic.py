@@ -1,25 +1,26 @@
 from abc import abstractmethod, ABC
+
 from model import TransitionRelation
 from copy import copy
-from enum import Enum
-from model import Config
-
 
 class SemanticTransitionRelation(ABC):
     @abstractmethod
     def initial_configurations(self): pass
 
     @abstractmethod
-    def enabled_rules(self, source) : pass
-    
+    def enabled_rules(self, source): pass
+
     @abstractmethod
-    def execute(self, rule, source) : pass
-    
+    def execute(self, rule, source): pass
+
+
 class STR2TR(TransitionRelation):
     def __init__(self, semantic):
         self.semantic = semantic
+
     def get_roots(self):
         return self.semantic.initial_configurations()
+
     def next(self, source):
         enabled_rules = self.semantic.enabled_rules(source)
         new_rules = []
@@ -28,72 +29,30 @@ class STR2TR(TransitionRelation):
         return new_rules
         # retourne les nouvelles configs
 
+
 class RuleAbstract(ABC):
     @abstractmethod
     def __init__(self, name, guard):
         self.name = name
         self.guard = guard
+
     @abstractmethod
     def execute(self, config): pass
-        
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return self.name
-    
+
+
 class RuleLambda(RuleAbstract):
     def __init__(self, name, guard, action):
         super().__init__(name, guard)
         self.action = action
 
-
     def execute(self, config):
         return [self.action(config)]
-    
-class Etat(Enum):
-    HOME = 0
-    GARDEN = 1
-    
-class RuleAliceToGarden(RuleAbstract):
-    def __init__(self):
-        super().__init__("alice to garden", lambda config : config.alice==Etat.HOME)
-        
-    def execute(self, new_config): 
-        new_config.alice = Etat.GARDEN
-        return new_config
-    
-class RuleAliceToHome(RuleAbstract):
-    def __init__(self):
-        super().__init__("alice to home", lambda config : config.alice==Etat.GARDEN)
-    def execute(self, new_config): 
-        new_config.alice = Etat.HOME
-        return new_config
-    
-class RuleBobToGarden(RuleAbstract):
-    def __init__(self):
-        super().__init__("bob to garden", lambda config : config.bob==Etat.HOME)
-    def execute(self, new_config): 
-        new_config.bob = Etat.GARDEN
-        return new_config
-    
-class RuleBobToHome(RuleAbstract):
-    def __init__(self):
-        super().__init__("bob to home", lambda config : config.bob==Etat.GARDEN)
-    def execute(self, new_config): 
-        new_config.bob = Etat.HOME
-        return new_config
-    
-class SoupConfig(Config):
-    @abstractmethod
-    def __copy__(self): 
-        pass
-    
-    @abstractmethod
-    def __eq__(self): pass
-    
-    @abstractmethod
-    def __hash__(self): pass
 
 class SoupProgram():
     def __init__(self, init):
@@ -110,11 +69,12 @@ class SoupSemantic(SemanticTransitionRelation):
 
     def initial_configurations(self):
         return [self.program.init]
-    
+
     def enabled_rules(self, source):
         return [rule for rule in self.program.rules if rule.guard(source)]
-    
+
     def execute(self, rule, source):
         new_source = copy(source)
         return [rule.execute(new_source)]
-        
+
+
