@@ -16,11 +16,11 @@ class SoupConfig(Config):
 
 
 class AliceAndBobConfig(SoupConfig):
-    def __init__(self, alice, bob):
+    def __init__(self, alice, bob, flagAlice=False, flagBob=False):
         self.alice = alice
         self.bob = bob
-        self.flagAlice = False
-        self.flagBob = False
+        self.flagAlice = flagAlice
+        self.flagBob = flagBob
 
     def __copy__(self):
         return AliceAndBobConfig(copy(self.alice),
