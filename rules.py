@@ -1,11 +1,20 @@
+from enum import Enum
 from config import AliceAndBobConfig
-from semantic import RuleAbstract, Etat, SoupProgram, SoupSemantic, STR2TR
+from semantic import RuleAbstract, SoupProgram, SoupSemantic, STR2TR
+
+
+class Etat(Enum):
+    HOME = 0
+    GARDEN = 1
+    INTERMEDIATE = 2
 
 
 class RuleAliceToGarden(RuleAbstract):
+    def guard(self, config):
+        return (config.alice == Etat.INTERMEDIATE) and (config.flagBob == False)
+
     def __init__(self):
-        super().__init__("alice to garden",
-                         lambda config: (config.alice == Etat.INTERMEDIATE) and (config.flagBob == False))
+        super().__init__("alice to garden", self.guard)
 
     def execute(self, new_config):
         new_config.alice = Etat.GARDEN
@@ -13,8 +22,11 @@ class RuleAliceToGarden(RuleAbstract):
 
 
 class RuleAliceToHome(RuleAbstract):
+    def guard(self, config):
+        return config.alice == Etat.GARDEN
+
     def __init__(self):
-        super().__init__("alice to home", lambda config: config.alice == Etat.GARDEN)
+        super().__init__("alice to home", self.guard)
 
     def execute(self, new_config):
         new_config.alice = Etat.HOME
@@ -24,14 +36,11 @@ class RuleAliceToHome(RuleAbstract):
 
 class RuleAliceToIntermediate(RuleAbstract):
 
-    def toto(self, config):
-        print('config',config.alice)
-        print(config.alice == Etat.HOME)
+    def guard(self, config):
         return config.alice == Etat.HOME
 
     def __init__(self):
-        super().__init__("alice to intermediate", self.toto)
-        # super().__init__("alice to intermediate", lambda config: config.alice == Etat.HOME)
+        super().__init__("alice to intermediate", self.guard)
 
     def execute(self, new_config):
         new_config.alice = Etat.INTERMEDIATE
@@ -40,9 +49,11 @@ class RuleAliceToIntermediate(RuleAbstract):
 
 
 class RuleBobToGarden(RuleAbstract):
+    def guard(self, config):
+        return (config.bob == Etat.INTERMEDIATE) and (config.flagAlice == False)
+
     def __init__(self):
-        super().__init__("bob to garden",
-                         lambda config: (config.bob == Etat.INTERMEDIATE) and (config.flagAlice == False))
+        super().__init__("bob to garden", self.guard)
 
     def execute(self, new_config):
         new_config.bob = Etat.GARDEN
@@ -50,8 +61,11 @@ class RuleBobToGarden(RuleAbstract):
 
 
 class RuleBobToHome(RuleAbstract):
+    def guard(self, config):
+        return config.bob == Etat.GARDEN
+
     def __init__(self):
-        super().__init__("bob to home", lambda config: config.bob == Etat.GARDEN)
+        super().__init__("bob to home", self.guard)
 
     def execute(self, new_config):
         new_config.bob = Etat.HOME
@@ -60,14 +74,16 @@ class RuleBobToHome(RuleAbstract):
 
 
 class RuleBobToIntermediate(RuleAbstract):
+    def guard(self, config):
+        return config.bob == Etat.HOME
+
     def __init__(self):
-        super().__init__("bob to intermediate", lambda config: config.bob == Etat.HOME)
+        super().__init__("bob to intermediate", self.guard)
 
     def execute(self, new_config):
         new_config.bob = Etat.INTERMEDIATE
         new_config.flagBob = True
         return new_config
-
 
 
 if __name__ == "__main__":
@@ -88,18 +104,19 @@ if __name__ == "__main__":
     #
     # str2tr.bfs(None, on_discovery=on_discovery)
 
-    print("config alice and bob", config_start.alice, config_start.bob)
-    print('enabled rules',soup_semantic.enabled_rules(config_start))
     from trace_ import ParentTraceProxy
+
     d = {}
     p = ParentTraceProxy(str2tr, d)
-    def on_discovery(source, config, o) :
-        res = config.alice == Etat.HOME and config.bob == Etat.GARDEN
-        if res : o[0] = config
-        print("config", config)
+
+
+    def on_discovery(source, config, o):
+        res = config.alice == Etat.INTERMEDIATE and config.bob == Etat.INTERMEDIATE #and config.flagAlice and config.flagBob
+        if res: o[0] = config
         return res
+
 
     o = [None]
     p.bfs(o, on_discovery=on_discovery)
     print(o)
-    res= p.get_trace(o[-1])
+    res = p.get_trace(o[-1])
