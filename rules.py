@@ -18,6 +18,7 @@ class RuleAliceToGarden(RuleAbstract):
 
     def execute(self, new_config):
         new_config.alice = Etat.GARDEN
+        new_config.flagAlice = True
         return new_config
 
 
@@ -45,6 +46,7 @@ class RuleAliceToIntermediate(RuleAbstract):
     def execute(self, new_config):
         new_config.alice = Etat.INTERMEDIATE
         new_config.flagAlice = True
+
         return new_config
 
 
@@ -57,6 +59,7 @@ class RuleBobToGarden(RuleAbstract):
 
     def execute(self, new_config):
         new_config.bob = Etat.GARDEN
+        new_config.flagBob = True
         return new_config
 
 
@@ -111,7 +114,7 @@ if __name__ == "__main__":
 
 
     def on_discovery(source, config, o):
-        res = config.alice == Etat.INTERMEDIATE and config.bob == Etat.INTERMEDIATE #and config.flagAlice and config.flagBob
+        res = config.alice == Etat.INTERMEDIATE and config.bob == Etat.INTERMEDIATE and config.flagAlice and config.flagBob
         if res: o[0] = config
         return res
 
@@ -119,4 +122,4 @@ if __name__ == "__main__":
     o = [None]
     p.bfs(o, on_discovery=on_discovery)
     print(o)
-    res = p.get_trace(o[-1])
+    res = p.get_trace(o[0])
