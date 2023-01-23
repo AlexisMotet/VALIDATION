@@ -30,8 +30,7 @@ class ParentTraceProxy(TransitionRelation):
         for s in reversed(trace):
             print(s)
         print("---------------------------")
-        return trace
-                      
+        return trace             
         
         
 if __name__ == "__main__" :
