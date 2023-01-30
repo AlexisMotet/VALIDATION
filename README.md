@@ -27,13 +27,14 @@ Pour celà nous modélisons le tout par un graph en se fixant une condition sur 
 
 #### Avoir une Trace
 
-``trace_`` nous permet de visualiser les transitions d'une configuration (nœud) à un autre en ligne de commande.
+``trace_`` nous permet de visualiser les transitions d'une configuration (nœud) à une autre en ligne de commande.
 
 #### Semantic  : Alice & Bob
 
-Nous avons cherché à implémenter des transitions avec une garde modéliser par une lambada fonction renvoyer un booléen et une action modéliser par une lambada fonction modifiant les variables de la Configuration.
+Nous avons cherché à implémenter des transitions avec une garde modéliser par une lambada fonction renvoyer un booléen et une action modéliser par une lambada fonction modifiant les variables de la Configuration. Cette logique est implémenté dans ``semantic``.
 
-Nous avons ensuite cherché à réaliser modéliser l'exemple d'Alice & Bob qui représente l'accès mutuel à une ressource critique. 
+Nous avons ensuite cherché à réaliser modéliser l'exemple d'Alice & Bob qui représente l'accès mutuel à une ressource critique dans ``AandB``.
+Une deuxième version ``AandB_deadlock`` permet de résoudre le problème de *deadlock*, le moment où Alice et Bob demande à rentrer en section critique en même temps. Pour celà on rajoute une règle pour laquelle Bob à la droit de changer d'avis en revenant à son état initial.
 
 #### Composition : Se déplacer dans 2 graphes avec les mêmes variables
 
