@@ -1,8 +1,11 @@
 from copy import copy, deepcopy
 from unittest import TestCase
-
-from AandB_deadlock import AliceAndBobConfig, RuleAliceToGarden, RuleAliceToHome, State, RuleBobToGarden, \
-    RuleAliceToIntermediate, RuleBobToHome, RuleBobToIntermediate, RuleBobIntermediateToHome
+from AandB_deadlock import AliceAndBobConfig, RuleAliceToGarden, RuleAliceToHome, State, RuleBobToGarden, RuleAliceToIntermediate, RuleBobToHome, RuleBobToIntermediate, RuleBobIntermediateToHome
+from AandB import AliceAndBobConfig as ABconf
+from AandB import RuleAliceToGarden as RAtG
+from AandB import RuleAliceToHome as RAtH
+from AandB import RuleBobToGarden as RBtG
+from AandB import RuleBobToHome as RBtH
 from composition import MaConfig, configProperty, StepSynchronousProduct
 from graph import DictGraph
 from hanoi import HanoiConfiguration, Hanoi
@@ -247,6 +250,35 @@ class TestAliceBobDeadLock(TestCase):
         assert res == []
 
 # __ALICE&BOB___________________________________________________________________________
+
+class TestAliceBob(TestCase):
+    """
+    Teste la classe AandB
+    """
+    def setUp(self):
+        config_start = ABconf(State.HOME, State.HOME)
+        program = SoupProgram(config_start)
+        program.add(RAtG())
+        program.add(RAtH())
+        program.add(RBtG())
+        program.add(RBtH())
+        soup_semantic = SoupSemantic(program)
+        str2tr = STR2TR(soup_semantic)
+        d = {}
+        p = ParentTraceProxy(str2tr, d)
+
+        def on_discovery(source, n, o):
+            res = n.alice == State.GARDEN and n.bob == State.GARDEN
+            if res: o[0] = n
+            return res
+
+        o = [None]
+        p.bfs(o, on_discovery=on_discovery)
+        print(o)
+        self.res = p.get_trace(o[0])
+
+    def test_alice_bob(self):
+       assert self.res in ['Le Noeud Config : {Alice State.GARDEN - Bob State.HOME} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}', 'Le Noeud Config : {Alice State.HOME - Bob State.GARDEN} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}' ]
 
 
 
