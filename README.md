@@ -18,7 +18,12 @@ Nous avons ensuite chercher à parcourir notre graph dans ``TransitionRelation``
 
 #### Des exmples : nbits & hanoi
 
+Dans ``nbits`` nous avons cherché à modéliser à partir d'un graphe tout les mots binaires de nbits et les transitions de celui-ci en ne changenat qu'un bit à la fois.
 
+Dans ``hanoi`` nous avons cherché à résoudre le problème de la tour de hanoi en avec un nombre de disques variable et de tours variables.
+<p align="center"> <img src="img_2.png">
+
+Pour celà nous modélisons le tout par un graph en se fixant des conditions sur la transition entre 2 configuration, un disque ne peut pas plus grand ne peut pas être au-dessus d'un disque plus petit.
 
 #### Avoir une Trace
 
