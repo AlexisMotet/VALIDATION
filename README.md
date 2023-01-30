@@ -12,11 +12,15 @@ Nous avons dans un premier temps chercher à modéliser un graph de POO. Pour ce
 
 Par exemple ``DictGraph([3], {3: [1, 2], 1: [3, 1], 2: [3]})`` représente ici :
 
-![img_1.png](img_1.png)
+<p align="center">
+    <img src="img_1.png">
+p>
 
 Nous avons ensuite chercher à parcourir notre graph dans ``TransitionRelation``, pour celà nous parcourons notre graphe en largeur dans ``bfs`` en marquant les nœuds les uns à la suite des autres lors de chaque visite.
 
 #### Des exmples : nbits & hanoi
+
+
 
 #### Avoir une Trace
 
@@ -26,7 +30,7 @@ Nous avons ensuite chercher à parcourir notre graph dans ``TransitionRelation``
 
 #### BONUS - Interface Graphique & Test Unitaire
 
-Nous avons créer une interface graphique permettant à l'utlisateur de créer son propre graph et de montrer son parcours par un bfs.
+Nous avons créer une interface graphique permettant à l'utlisateur de créer son propre graph et de montrer son parcours par un parcours en largeur (*Breadth-First Search* - bfs).
 
 Pour celà il faut :
 
