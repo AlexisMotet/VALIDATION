@@ -12,9 +12,7 @@ Nous avons dans un premier temps chercher à modéliser un graph de POO. Pour ce
 
 Par exemple ``DictGraph([3], {3: [1, 2], 1: [3, 1], 2: [3]})`` représente ici :
 
-<p align="center">
-    <img src="img_1.png">
-p>
+<p align="center"> <img src="img_1.png">
 
 Nous avons ensuite chercher à parcourir notre graph dans ``TransitionRelation``, pour celà nous parcourons notre graphe en largeur dans ``bfs`` en marquant les nœuds les uns à la suite des autres lors de chaque visite.
 
@@ -39,5 +37,5 @@ Pour celà il faut :
 * Clicker de nœud en nœud pour y ajouter des liens
 * Réaliser un click molette sur un nœud afin qu'il soit le départ de notre parcours de graph
 
-Nous pouvons enfin, clicker sur *run* pour pour voir le parcours du graph de manière graphique. 
-![img.png](img.png)
+Nous pouvons enfin, clicker sur *run* pour pour voir le parcours du graph de manière graphique.
+<p align="center"> <img src="img.png">
