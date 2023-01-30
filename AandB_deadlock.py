@@ -1,10 +1,10 @@
 from enum import Enum
 from semantic import RuleAbstract
-from copy import copy
+from copy import copy, deepcopy
 from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
 
 
-class Etat(Enum):
+class State(Enum):
     HOME = 0
     INTERMEDIATE = 1
     GARDEN = 2
@@ -15,12 +15,16 @@ class AliceAndBobConfig(SoupConfig):
         self.bob = bob
         self.flag_alice = flag_alice
         self.flag_bob = flag_bob
-        
+    
     def __copy__(self):
         return AliceAndBobConfig(copy(self.alice),
-                                 copy(self.bob),
-                                 copy(self.flag_alice),
-                                 copy(self.flag_bob))
+                                 copy(self.bob))
+        
+    def __deepcopy__(self, memo):
+        return AliceAndBobConfig(deepcopy(self.alice, memo),
+                                 deepcopy(self.bob, memo),
+                                 deepcopy(self.flag_alice, memo),
+                                 deepcopy(self.flag_bob, memo))
     def __str__(self):
         return "[Alice %s Flag %s - Bob %s Flag %s]" % (self.alice, 
                                                                  self.flag_alice,
@@ -40,70 +44,63 @@ class AliceAndBobConfig(SoupConfig):
 class RuleAliceToIntermediate(RuleAbstract):
     def __init__(self):
          super().__init__("alice to intermediate", 
-                          lambda config : config.alice==Etat.HOME)
+                          lambda config : config.alice==State.HOME)
     def execute(self, new_config): 
-        new_config.alice = Etat.INTERMEDIATE
+        new_config.alice = State.INTERMEDIATE
         new_config.flag_alice = True
-        return new_config
     
 class RuleAliceToGarden(RuleAbstract):
     def __init__(self):
         super().__init__("alice to garden", lambda config : 
-            config.alice == Etat.INTERMEDIATE and config.flag_bob!=True)
+            config.alice == State.INTERMEDIATE and config.flag_bob!=True)
         
     def execute(self, new_config): 
-        new_config.alice = Etat.GARDEN
-        return new_config
+        new_config.alice = State.GARDEN
     
 class RuleAliceToHome(RuleAbstract):
     def __init__(self):
-        super().__init__("alice to home", lambda config : config.alice==Etat.GARDEN)
+        super().__init__("alice to home", lambda config : config.alice==State.GARDEN)
 
     def execute(self, new_config): 
-        new_config.alice = Etat.HOME
+        new_config.alice = State.HOME
         new_config.flag_alice = False
-        return new_config
     
 class RuleBobToIntermediate(RuleAbstract):
     def __init__(self):
          super().__init__("bob to intermediate", 
-                          lambda config : config.bob==Etat.HOME)
+                          lambda config : config.bob==State.HOME)
     def execute(self, new_config): 
-        new_config.bob = Etat.INTERMEDIATE
+        new_config.bob = State.INTERMEDIATE
         new_config.flag_bob = True
-        return new_config
     
 class RuleBobToGarden(RuleAbstract):
     def __init__(self):
         super().__init__("bob to garden", lambda config : 
-            config.bob == Etat.INTERMEDIATE and config.flag_alice!=True)
+            config.bob == State.INTERMEDIATE and config.flag_alice!=True)
         
     def execute(self, new_config): 
-        new_config.bob = Etat.GARDEN
-        return new_config
+        new_config.bob = State.GARDEN
     
 class RuleBobToHome(RuleAbstract):
     def __init__(self):
-        super().__init__("bob to home", lambda config : config.bob==Etat.GARDEN)
+        super().__init__("bob to home", lambda config : config.bob==State.GARDEN)
         
     def execute(self, new_config): 
-        new_config.bob = Etat.HOME
+        new_config.bob = State.HOME
         new_config.flag_bob = False
-        return new_config
     
 class RuleBobIntermediateToHome(RuleAbstract):
     def __init__(self):
         super().__init__("bob to intermediate from home", 
-                         lambda config : config.bob==Etat.INTERMEDIATE
+                         lambda config : config.bob==State.INTERMEDIATE
                          and config.flag_alice==True)
         
     def execute(self, new_config): 
-        new_config.bob = Etat.HOME
+        new_config.bob = State.HOME
         new_config.flag_bob = False
-        return new_config
     
 if __name__=="__main__":
-    config_start = AliceAndBobConfig(Etat.HOME, Etat.HOME, False, False)
+    config_start = AliceAndBobConfig(State.HOME, State.HOME, False, False)
     program = SoupProgram(config_start)
     program.add(RuleAliceToGarden())
     program.add(RuleAliceToHome())
@@ -123,7 +120,7 @@ if __name__=="__main__":
     
     
     def on_discovery(source, n, o) :
-        res = n.alice == Etat.GARDEN and n.bob == Etat.GARDEN
+        res = n.alice == State.GARDEN and n.bob == State.GARDEN
         if res : o[0] = n
         if len(o[1].enabled_rules(n)) == 0 :
             print("deadlock trouve pour la config : %s" % n)

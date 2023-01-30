@@ -1,9 +1,9 @@
 from enum import Enum
 from semantic import RuleAbstract
-from copy import copy
+from copy import copy, deepcopy
 from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
 
-class Etat(Enum):
+class State(Enum):
     HOME = 0
     GARDEN = 1
     
@@ -14,7 +14,11 @@ class AliceAndBobConfig(SoupConfig):
         
     def __copy__(self):
         return AliceAndBobConfig(copy(self.alice),
-                           copy(self.bob))
+                                 copy(self.bob))
+        
+    def __deepcopy__(self, memo=None):
+        return AliceAndBobConfig(deepcopy(self.alice, memo),
+                           deepcopy(self.bob, memo))
     def __str__(self):
         return "Config : {Alice %s - Bob %s}" % (self.alice, self.bob)
     
@@ -29,39 +33,35 @@ class AliceAndBobConfig(SoupConfig):
     
 class RuleAliceToGarden(RuleAbstract):
     def __init__(self):
-        super().__init__("alice to garden", lambda config : config.alice==Etat.HOME)
+        super().__init__("alice to garden", lambda config : config.alice==State.HOME)
         
     def execute(self, new_config): 
-        new_config.alice = Etat.GARDEN
-        return new_config
+        new_config.alice = State.GARDEN
     
 class RuleAliceToHome(RuleAbstract):
     def __init__(self):
-        super().__init__("alice to home", lambda config : config.alice==Etat.GARDEN)
+        super().__init__("alice to home", lambda config : config.alice==State.GARDEN)
         
     def execute(self, new_config): 
-        new_config.alice = Etat.HOME
-        return new_config
+        new_config.alice = State.HOME
     
 class RuleBobToGarden(RuleAbstract):
     def __init__(self):
-        super().__init__("bob to garden", lambda config : config.bob==Etat.HOME)
+        super().__init__("bob to garden", lambda config : config.bob==State.HOME)
         
     def execute(self, new_config): 
-        new_config.bob = Etat.GARDEN
-        return new_config
+        new_config.bob = State.GARDEN
     
 class RuleBobToHome(RuleAbstract):
     def __init__(self):
-        super().__init__("bob to home", lambda config : config.bob==Etat.GARDEN)
+        super().__init__("bob to home", lambda config : config.bob==State.GARDEN)
         
     def execute(self, new_config): 
-        new_config.bob = Etat.HOME
-        return new_config
+        new_config.bob = State.HOME
 
     
 if __name__=="__main__":
-    config_start = AliceAndBobConfig(Etat.HOME, Etat.HOME)
+    config_start = AliceAndBobConfig(State.HOME, State.HOME)
     program = SoupProgram(config_start)
     program.add(RuleAliceToGarden())
     program.add(RuleAliceToHome())
@@ -77,7 +77,7 @@ if __name__=="__main__":
     d = {}
     p = ParentTraceProxy(str2tr, d)
     def on_discovery(source, n, o) :
-        res = n.alice == Etat.GARDEN and n.bob == Etat.GARDEN
+        res = n.alice == State.GARDEN and n.bob == State.GARDEN
         if res : o[0] = n
         return res
     
