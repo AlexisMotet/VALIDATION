@@ -34,21 +34,21 @@ class ParentTraceProxy(TransitionRelation):
         
         
 if __name__ == "__main__" :
-    from graph import bfs
+    from model import TransitionRelation
     from hanoi import Hanoi, HanoiConfiguration
     hanoiConfiguration = HanoiConfiguration({1: [3, 2, 1], 2: [], 3: []})
 
     hanoi = Hanoi([hanoiConfiguration])
     d = {}
     p = ParentTraceProxy(hanoi, d)
-    bfs(p, None)
+    TransitionRelation.bfs(p, None)
     res= p.get_trace(HanoiConfiguration({1: [], 2: [], 3: [3, 2, 1]}))
-    print('res', res)
+    print('res -1', res[0])
 
     nbits = NBits([0], 2)
     ptp = ParentTraceProxy(nbits, {})
-    bfs(ptp, None)
-    res = ptp.get_trace(1)
+    TransitionRelation.bfs(ptp, None)
+    res = ptp.get_trace(3)
     print('res', res)
 
     """

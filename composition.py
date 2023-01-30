@@ -1,5 +1,11 @@
 from semantic import SemanticTransitionRelation, Stutter
 from property import Step
+from semantic import SoupProgram, SoupSemantic, RuleLambda, SoupConfig
+from copy import copy, deepcopy
+from property import PropertySoupSemantic, PropertyRuleLambda
+from semantic import STR2TR
+from trace_ import ParentTraceProxy
+
 
 class SyncConfig():
     def __init__(self, model_config, property_config):
@@ -65,40 +71,63 @@ class StepSynchronousProduct(SemanticTransitionRelation):
         targets = self.property_.execute(property_rule, model_step, property_config)
         return [SyncConfig(model_step.target, target) for target in
                 targets]
-        
-if __name__ == "__main__": 
-    from semantic import SoupProgram, SoupSemantic, RuleLambda, SoupConfig
-    from copy import copy, deepcopy
-    class MaConfig(SoupConfig):
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-            
-        def __copy__(self): 
-            return MaConfig(copy(self.x), copy(self.y))
-        
-        def __deepcopy__(self, memo=None): 
-            return MaConfig(deepcopy(self.x, memo), deepcopy(self.y, memo))
-        
-        def __eq__(self, other):
-            return self.x == other.x and self.y == other.y
-        
-        def __hash__(self): 
-            return hash(frozenset([self.x, self.y]))
-        
-        def __str__(self):
-            return "Ma Config : %d %d" % (self.x, self.y)
-    
-        def __repr__(self):
-            return "Ma Config : %d %d" % (self.x, self.y)
-        
+
+# class Test
+class MaConfig(SoupConfig):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __copy__(self):
+        return MaConfig(copy(self.x), copy(self.y))
+
+    def __deepcopy__(self, memo=None):
+        return MaConfig(deepcopy(self.x, memo), deepcopy(self.y, memo))
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash(frozenset([self.x, self.y]))
+
+    def __str__(self):
+        return "Ma Config : %d %d" % (self.x, self.y)
+
+    def __repr__(self):
+        return "Ma Config : %d %d" % (self.x, self.y)
+
+# Class Test
+class configProperty(SoupConfig):
+    def __init__(self, start, pc=0):
+        self.state = start
+        self.pc = pc
+
+    def __copy__(self):
+        return configProperty(copy(self.state), copy(self.pc))
+
+    def __deepcopy__(self, memo=None):
+        return configProperty(deepcopy(self.state, memo),
+                              deepcopy(self.pc, memo))
+
+    def __eq__(self, other):
+        return self.state == other.state and self.state == other.state
+
+    def __hash__(self):
+        return hash(frozenset([self.state, self.pc]))
+
+    def __str__(self):
+        return "config : [%s pc=%d]" % (self.state, self.pc)
+
+    def __repr__(self):
+        return self.__str__()
+
+
+if __name__ == "__main__":
     start_config = MaConfig(4, 2)
     
-    def addition(config):
-        config.x = config.x + config.y
+    def addition(config): config.x = config.x + config.y
     
-    def soustraction(config):
-        config.y = config.y - config.x
+    def soustraction(config): config.y = config.y - config.x
     
     addition = RuleLambda("addition", lambda config : True, addition)
     multiplication = RuleLambda("multiplication", lambda config : True, soustraction)
@@ -106,33 +135,7 @@ if __name__ == "__main__":
     soup_program.add(addition)
     soup_program.add(multiplication)
     soup_semantic = SoupSemantic(soup_program)
-
-    from property import PropertySoupSemantic, PropertyRuleLambda
-  
     rules = []
-    class configProperty(SoupConfig):
-        def __init__(self, start, pc=0):
-            self.state = start
-            self.pc = pc
-            
-        def __copy__(self): 
-            return configProperty(copy(self.state), copy(self.pc))
-        
-        def __deepcopy__(self, memo=None): 
-            return configProperty(deepcopy(self.state, memo),
-                                  deepcopy(self.pc, memo))
-        
-        def __eq__(self, other):
-            return self.state == other.state and self.state == other.state
-        
-        def __hash__(self): 
-            return hash(frozenset([self.state, self.pc]))
-        
-        def __str__(self):
-            return "config : [%s pc=%d]" % (self.state, self.pc)
-        
-        def __repr__(self):
-            return self.__str__()
 
     start_config_property = configProperty(False)
     
@@ -152,18 +155,17 @@ if __name__ == "__main__":
     
     soup_semantic_property = PropertySoupSemantic(start_config_property, rules)
     step_sync = StepSynchronousProduct(soup_semantic, soup_semantic_property)
-    from semantic import STR2TR
     tr = STR2TR(step_sync)
-    
-    from trace_ import ParentTraceProxy
     d = {}
     p = ParentTraceProxy(tr, d)
     o = [None]
+
     def on_discovery(source, n, o) :
         if n.model_config.x > 10 or n.model_config.x < -10 :
             o[0] = n
             return True
         return False
+
     p.bfs(o=o, on_discovery=on_discovery)
     res= p.get_trace(o[0])
     

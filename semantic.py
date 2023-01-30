@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from enum import Enum
 from model import TransitionRelation
 from copy import deepcopy
 from model import Config
