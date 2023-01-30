@@ -23,13 +23,21 @@ Dans ``nbits`` nous avons cherché à modéliser à partir d'un graphe tout les 
 Dans ``hanoi`` nous avons cherché à résoudre le problème de la tour de hanoi en avec un nombre de disques variable et de tours variables.
 <p align="center"> <img src="img_2.png">
 
-Pour celà nous modélisons le tout par un graph en se fixant des conditions sur la transition entre 2 configuration, un disque ne peut pas plus grand ne peut pas être au-dessus d'un disque plus petit.
+Pour celà nous modélisons le tout par un graph en se fixant une condition sur la transition entre 2 configurations, un disque ne peut pas plus grand ne peut pas être au-dessus d'un disque plus petit.
 
 #### Avoir une Trace
 
+``trace_`` nous permet de visualiser les transitions d'une configuration (nœud) à un autre en ligne de commande.
+
 #### Semantic  : Alice & Bob
 
+Nous avons cherché à implémenter des transitions avec une garde modéliser par une lambada fonction renvoyer un booléen et une action modéliser par une lambada fonction modifiant les variables de la Configuration.
+
+Nous avons ensuite cherché à réaliser modéliser l'exemple d'Alice & Bob qui représente l'accès mutuel à une ressource critique. 
+
 #### Composition : Se déplacer dans 2 graphes avec les mêmes variables
+
+``property``
 
 #### BONUS - Interface Graphique & Test Unitaire
 
