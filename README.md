@@ -10,7 +10,7 @@ Pour réaliser celà nous avons travaillé par étape :
 #### Model & Graph
 Nous avons dans un premier temps chercher à modéliser un graph de POO. Pour celà, nous avons créé la classe *DictGraph* qui contient le nom du nœud racine *self.roots* et *self.d* représentant les transitions au sein du graph modélisé grace à un dictionnaire.
 
-par exemple ici ``DictGraph([3], {3: [1, 2], 1: [3, 1], 2: [3]})`` représente ici
+Par exemple ``DictGraph([3], {3: [1, 2], 1: [3, 1], 2: [3]})`` représente ici :
 
 ![img_1.png](img_1.png)
 
