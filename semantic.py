@@ -62,38 +62,6 @@ class Stutter(RuleAbstract):
 
         return [self.action(config)]
 
-class Etat(Enum):
-    HOME = 0
-    GARDEN = 1
-
-class RuleAliceToGarden(RuleAbstract):
-    def __init__(self):
-        super().__init__("alice to garden", lambda config : config.alice==Etat.HOME)
-
-    def execute(self, new_config):
-        new_config.alice = Etat.GARDEN
-        return new_config
-
-class RuleAliceToHome(RuleAbstract):
-    def __init__(self):
-        super().__init__("alice to home", lambda config : config.alice==Etat.GARDEN)
-    def execute(self, new_config):
-        new_config.alice = Etat.HOME
-        return new_config
-
-class RuleBobToGarden(RuleAbstract):
-    def __init__(self):
-        super().__init__("bob to garden", lambda config : config.bob==Etat.HOME)
-    def execute(self, new_config):
-        new_config.bob = Etat.GARDEN
-        return new_config
-
-class RuleBobToHome(RuleAbstract):
-    def __init__(self):
-        super().__init__("bob to home", lambda config : config.bob==Etat.GARDEN)
-    def execute(self, new_config):
-        new_config.bob = Etat.HOME
-        return new_config
 
 class SoupConfig(Config):
     @abstractmethod
