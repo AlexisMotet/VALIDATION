@@ -108,7 +108,7 @@ if __name__=="__main__":
     program.add(RuleBobToGarden())
     program.add(RuleBobToHome())
     program.add(RuleBobToIntermediate())
-    #program.add(RuleBobIntermediateToHome())
+    # program.add(RuleBobIntermediateToHome())
     soup_semantic = SoupSemantic(program)
     str2tr = STR2TR(soup_semantic)
     
@@ -129,3 +129,5 @@ if __name__=="__main__":
     
     p.bfs(o, on_discovery=on_discovery)
     res= p.get_trace(o[2])
+
+    print(res)

@@ -1,7 +1,8 @@
 from copy import copy, deepcopy
 from unittest import TestCase
 
-from AandB import AliceAndBobConfig, RuleAliceToGarden, RuleAliceToHome, State
+from AandB_deadlock import AliceAndBobConfig, RuleAliceToGarden, RuleAliceToHome, State, RuleBobToGarden, \
+    RuleAliceToIntermediate, RuleBobToHome, RuleBobToIntermediate, RuleBobIntermediateToHome
 from composition import MaConfig, configProperty, StepSynchronousProduct
 from graph import DictGraph
 from hanoi import HanoiConfiguration, Hanoi
@@ -170,10 +171,10 @@ class TestPropertyComposition(TestCase):
             target.pc += 1
 
         rules.append(PropertyRuleLambda("x > 3", lambda model_step, target:
-        model_step.source.x > 8, etatTrue))
+        model_step.source.x > 3, etatTrue))
 
         rules.append(PropertyRuleLambda("x <= 3", lambda model_step, target:
-        model_step.source.x <= 8, etatFalse))
+        model_step.source.x <= 3, etatFalse))
 
         self.soup_semantic_property = PropertySoupSemantic(start_config_property, rules)
 
@@ -185,7 +186,7 @@ class TestPropertyComposition(TestCase):
         o = [None]
 
         def on_discovery(source, n, o):
-            if n.model_config.x > 10 or n.model_config.x < -10:
+            if n.model_config.x > 4 or n.model_config.x < -4:
                 o[0] = n
                 return True
             return False
@@ -193,11 +194,59 @@ class TestPropertyComposition(TestCase):
         p.bfs(o=o, on_discovery=on_discovery)
         res = p.get_trace(o[0])
 
-        assert res == False
+        assert res[0] == 'Le Noeud Model Config : [Ma Config : 4 2] Property Config : [config : [False pc=0]] mene au Noeud Model Config : [Ma Config : 6 2] Property Config : [config : [True pc=1]]'
 
 # __ALICE&BOB_DEADLOCK__________________________________________________________________
 
-# __ALICE&BOB_NO_DEADLOCK_______________________________________________________________
+class TestAliceBobDeadLock(TestCase):
+    """
+    Teste la classe AandB_deadlock
+    """
+    def setUp(self):
+        config_start = AliceAndBobConfig(State.HOME, State.HOME, False, False)
+        self.program = SoupProgram(config_start)
+        # Ajout des différentes règles
+        self.program.add(RuleAliceToGarden())
+        self.program.add(RuleAliceToHome())
+        self.program.add(RuleAliceToIntermediate())
+        self.program.add(RuleBobToGarden())
+        self.program.add(RuleBobToHome())
+        self.program.add(RuleBobToIntermediate())
+
+        # Semantic
+        self.soup_semantic = SoupSemantic(self.program)
+        str2tr = STR2TR(self.soup_semantic)
+        d = {}
+        self.p = ParentTraceProxy(str2tr, d)
+        self.o = [None, self.soup_semantic, None]
+
+        # On discovery pour trouver le deadlock
+        def on_discovery(source, n, o):
+            res = n.alice == State.GARDEN and n.bob == State.GARDEN
+            if res: o[0] = n
+            if len(o[1].enabled_rules(n)) == 0:
+                print("deadlock trouve pour la config : %s" % n)
+                o[2] = n
+            return res
+
+        self.p.bfs(self.o, on_discovery=on_discovery)
+        # self.res = self.p.get_trace(self.o[2])
+
+    def test_alice_bob_deadlock(self):
+        res = self.p.get_trace(self.o[2])
+        assert res[0] == 'Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]'
+
+    def test_alice_bob_no_deadlock(self):
+        self.program.add(RuleBobIntermediateToHome())
+        self.soup_semantic = SoupSemantic(self.program)
+        str2tr = STR2TR(self.soup_semantic)
+        d = {}
+        self.p = ParentTraceProxy(str2tr, d)
+        self.o = [None, self.soup_semantic, None]
+        res = self.p.get_trace(self.o[2])
+        assert res == []
+
+# __ALICE&BOB___________________________________________________________________________
 
 
 
