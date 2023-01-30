@@ -2,10 +2,10 @@ from copy import copy, deepcopy
 from unittest import TestCase
 from AandB_deadlock import AliceAndBobConfig, RuleAliceToGarden, RuleAliceToHome, State, RuleBobToGarden, RuleAliceToIntermediate, RuleBobToHome, RuleBobToIntermediate, RuleBobIntermediateToHome
 from AandB import AliceAndBobConfig as ABconf
-from AandB import RuleAliceToGarden as RAtG
-from AandB import RuleAliceToHome as RAtH
-from AandB import RuleBobToGarden as RBtG
-from AandB import RuleBobToHome as RBtH
+from AandB import RuleAliceToGarden as ratg
+from AandB import RuleAliceToHome as rath
+from AandB import RuleBobToGarden as rbtg
+from AandB import RuleBobToHome as rbth
 from composition import MaConfig, configProperty, StepSynchronousProduct
 from graph import DictGraph
 from hanoi import HanoiConfiguration, Hanoi
@@ -14,6 +14,7 @@ from nbits import NBits
 from property import PropertyRuleLambda, PropertySoupSemantic
 from semantic import SoupProgram, SoupConfig, RuleLambda, SoupSemantic, STR2TR
 from trace_ import ParentTraceProxy
+from AandB import State
 
 # pour run : python -m unittest test.py
 
@@ -258,10 +259,10 @@ class TestAliceBob(TestCase):
     def setUp(self):
         config_start = ABconf(State.HOME, State.HOME)
         program = SoupProgram(config_start)
-        program.add(RAtG())
-        program.add(RAtH())
-        program.add(RBtG())
-        program.add(RBtH())
+        program.add(ratg())
+        program.add(rath())
+        program.add(rbtg())
+        program.add(rbth())
         soup_semantic = SoupSemantic(program)
         str2tr = STR2TR(soup_semantic)
         d = {}
@@ -274,11 +275,38 @@ class TestAliceBob(TestCase):
 
         o = [None]
         p.bfs(o, on_discovery=on_discovery)
-        print(o)
         self.res = p.get_trace(o[0])
 
     def test_alice_bob(self):
-       assert self.res in ['Le Noeud Config : {Alice State.GARDEN - Bob State.HOME} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}', 'Le Noeud Config : {Alice State.HOME - Bob State.GARDEN} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}' ]
+       assert self.res[0] in ['Le Noeud Config : {Alice State.GARDEN - Bob State.HOME} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}', 'Le Noeud Config : {Alice State.HOME - Bob State.GARDEN} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}' ]
+
+
+    def test_rule_alice_to_garden(self):
+        config_start = ABconf(State.HOME, State.HOME)
+        rule = ratg() #Alias de RuleAliceToGarden
+        rule.execute(config_start)
+        assert ((config_start.alice == State.GARDEN) and (config_start.bob == State.HOME))
+
+    def test_rule_alice_to_home(self):
+        config_start = ABconf(State.GARDEN, State.HOME)
+        rule = rath() #Alias de RuleAliceToHome
+        rule.execute(config_start)
+        assert config_start.alice == State.HOME and config_start.bob == State.HOME
+
+    def test_rule_bob_to_garden(self):
+        config_start = ABconf(State.HOME, State.HOME)
+        rule = rbtg() #Alias de RuleAliceToHome
+        rule.execute(config_start)
+        assert config_start.alice == State.HOME and config_start.bob == State.GARDEN
+
+    def test_rule_bob_to_home(self):
+        config_start = ABconf(State.HOME, State.GARDEN)
+        rule = rbth() #Alias de RuleAliceToHome
+        rule.execute(config_start)
+        assert config_start.alice == State.HOME and config_start.bob == State.HOME
+
+
+
 
 
 

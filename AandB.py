@@ -71,7 +71,7 @@ if __name__=="__main__":
     str2tr = STR2TR(soup_semantic)
     def on_discovery(source, n, o) :
         print(n)
-    str2tr.bfs(None, on_discovery=on_discovery)  
+    str2tr.bfs(None, on_discovery=on_discovery)
     """
     from trace_ import ParentTraceProxy
     d = {}
@@ -89,4 +89,32 @@ if __name__=="__main__":
     p.bfs(o, on_discovery=on_discovery)
     print(o)
     res= p.get_trace(o[0])
+    """
+
+
+
+    """
+    config_start = AliceAndBobConfig(State.HOME, State.HOME)
+    program = SoupProgram(config_start)
+    program.add(RuleAliceToGarden())
+    program.add(RuleAliceToHome())
+    program.add(RuleBobToGarden())
+    program.add(RuleBobToHome())
+    soup_semantic = SoupSemantic(program)
+    str2tr = STR2TR(soup_semantic)
+    d = {}
+    p = ParentTraceProxy(str2tr, d)
+
+
+    def on_discovery(source, n, o):
+        res = n.alice == State.GARDEN and n.bob == State.GARDEN
+        if res: o[0] = n
+        return res
+
+
+    o = [None]
+    p.bfs(o, on_discovery=on_discovery)
+    print(o)
+    res = p.get_trace(o[0])
+    print('res : ',res[0])
     """
