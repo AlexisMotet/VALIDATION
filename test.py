@@ -277,10 +277,6 @@ class TestAliceBob(TestCase):
         p.bfs(o, on_discovery=on_discovery)
         self.res = p.get_trace(o[0])
 
-    def test_alice_bob(self):
-       assert self.res[0] in ['Le Noeud Config : {Alice State.GARDEN - Bob State.HOME} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}', 'Le Noeud Config : {Alice State.HOME - Bob State.GARDEN} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}' ]
-
-
     def test_rule_alice_to_garden(self):
         config_start = ABconf(State.HOME, State.HOME)
         rule = ratg() #Alias de RuleAliceToGarden
@@ -304,6 +300,9 @@ class TestAliceBob(TestCase):
         rule = rbth() #Alias de RuleAliceToHome
         rule.execute(config_start)
         assert config_start.alice == State.HOME and config_start.bob == State.HOME
+
+    def test_alice_bob(self):
+       assert self.res[0] in ['Le Noeud Config : {Alice State.GARDEN - Bob State.HOME} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}', 'Le Noeud Config : {Alice State.HOME - Bob State.GARDEN} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}' ]
 
 
 
