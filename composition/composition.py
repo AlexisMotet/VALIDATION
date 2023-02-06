@@ -1,8 +1,6 @@
 import semantic_transition_relation.semantic as semantic
-from composition.property import Step, PropertySoupSemantic, PropertyRuleLambda
 from copy import copy, deepcopy
-
-
+import composition.property as property
 class SyncConfig():
     def __init__(self, model_config, property_config):
         self.model_config = model_config
@@ -56,7 +54,7 @@ class StepSynchronousProduct(semantic.SemanticTransitionRelation):
                                                               property_config)
                 sync_rules += [(model_step, rule) for rule in property_rules]
         if n_model_rules == 0:
-            model_step = Step(model_config, semantic.Stutter(), model_config)
+            model_step = property.Step(model_config, semantic.Stutter(), model_config)
             property_rules = self.property_.enabled_rules(model_step, property_config)
             sync_rules += [(model_step, rule) for rule in property_rules]
         return sync_rules

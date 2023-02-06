@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 import transition_relation.model as model
-=======
-from transition_relation.model import TransitionRelation
-from transition_relation.nbits import NBits
->>>>>>> c256c9aab89cc5390e1a8d3d97f4743b5051f23f
-
 
 class ParentTraceProxy(model.TransitionRelation):
     def __init__(self, operand : model.TransitionRelation):
@@ -30,9 +24,9 @@ class ParentTraceProxy(model.TransitionRelation):
         while True :
             parent = self.dict_[target]
             if str(parent) == "ROOT" :
-                trace.append("Le noeud racine est \"%s\"" % str(target))
+                trace.append("[TRACE] Le noeud racine est \"%s\"" % str(target))
                 break
-            trace.append("Le noeud \"%s\" mene au noeud \"%s\"" % (str(parent), str(target)))
+            trace.append("[TRACE] Le noeud \"%s\" mene au noeud \"%s\"" % (str(parent), str(target)))
             target = parent
             
         print("---------- TRACE ----------")
