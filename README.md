@@ -53,3 +53,8 @@ Pour celà il faut :
 
 Nous pouvons enfin, clicker sur *run* pour pour voir le parcours du graph de manière graphique.
 <p align="center"> <img src="img.png">
+
+Des unitaires unitaires permettant une converture de 100% ont été réaliser.
+Aucun animal n'a été maltraité lors de la réalistion de ce projet.
+
+C'est nous qui avons prété notre chargeur USB-C quand vous étiez dans le besoin.
