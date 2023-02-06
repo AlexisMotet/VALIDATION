@@ -62,7 +62,3 @@ class PropertySoupSemantic(PropertySemanticTransitionRelation):
         target = deepcopy(source)
         rule.execute(model_step, target)
         return [target]
-        
-    
-    
-    
