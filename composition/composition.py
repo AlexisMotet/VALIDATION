@@ -1,8 +1,7 @@
-from semantic_transition_relation.semantic import SoupProgram, SoupSemantic, RuleLambda, SoupConfig, STR2TR,SemanticTransitionRelation, Stutter
 from copy import copy, deepcopy
-from composition.property import PropertySoupSemantic, PropertyRuleLambda, Step
 from transition_relation.trace_ import ParentTraceProxy
-
+import composition.property as prop
+import semantic_transition_relation.semantic as sem
 
 class SyncConfig():
     def __init__(self, model_config, property_config):
@@ -28,7 +27,7 @@ class SyncConfig():
         return "Model Config : [%s] Property Config : [%s]" % (self.model_config, 
                                                                self.property_config)
 
-class StepSynchronousProduct(SemanticTransitionRelation):
+class StepSynchronousProduct(sem.SemanticTransitionRelation):
     def __init__(self, model, property_):
         self.model = model
         self.property_ = property_
@@ -50,12 +49,12 @@ class StepSynchronousProduct(SemanticTransitionRelation):
             targets = self.model.execute(model_rule, model_config)
             if len(targets) == 0 : n_model_rules -= 1 # deadlock
             for target in targets :
-                model_step = Step(model_config, model_rule, target)
+                model_step = prop.Step(model_config, model_rule, target)
                 property_rules = self.property_.enabled_rules(model_step, 
                                                               property_config)
                 sync_rules += [(model_step, rule) for rule in property_rules]
         if n_model_rules == 0:
-            model_step = Step(model_config, Stutter(), model_config)
+            model_step = prop.Step(model_config, sem.Stutter(), model_config)
             property_rules = self.property_.enabled_rules(model_step, property_config)
             sync_rules += [(model_step, rule) for rule in property_rules]
         return sync_rules
@@ -68,7 +67,7 @@ class StepSynchronousProduct(SemanticTransitionRelation):
         return [SyncConfig(model_step.target, target) for target in targets]
 
 # class Test
-class MaConfig(SoupConfig):
+class MaConfig(sem.SoupConfig):
     def __init__(self, x):
         self.x = x
 
@@ -91,7 +90,7 @@ class MaConfig(SoupConfig):
         return "Ma Config : %d" % (self.x)
 
 # Class Test
-class configProperty(SoupConfig):
+class configProperty(sem.SoupConfig):
     def __init__(self, start, pc=0):
         self.state = start
         self.pc = pc
@@ -125,12 +124,12 @@ if __name__ == "__main__":
     def soustraction(config): 
         config.x = config.x - 1
     
-    addition = RuleLambda("addition", lambda config : True, addition)
-    multiplication = RuleLambda("multiplication", lambda config : True, soustraction)
-    soup_program = SoupProgram(start_config)
+    addition = sem.RuleLambda("addition", lambda config : True, addition)
+    multiplication = sem.RuleLambda("multiplication", lambda config : True, soustraction)
+    soup_program = sem.SoupProgram(start_config)
     soup_program.add(addition)
     soup_program.add(multiplication)
-    soup_semantic = SoupSemantic(soup_program)
+    soup_semantic = sem.SoupSemantic(soup_program)
     rules = []
 
     start_config_property = configProperty(False)
@@ -143,15 +142,15 @@ if __name__ == "__main__":
         target.state = True
         target.pc +=1
          
-    rules.append(PropertyRuleLambda("x == 6", lambda model_step, target :
+    rules.append(prop.PropertyRuleLambda("x == 6", lambda model_step, target :
         model_step.source.x ==  6, etatTrue))
     
-    rules.append(PropertyRuleLambda("x != 6", lambda model_step, target :
+    rules.append(prop.PropertyRuleLambda("x != 6", lambda model_step, target :
         model_step.source.x != 6, etatFalse))
     
-    soup_semantic_property = PropertySoupSemantic(start_config_property, rules)
+    soup_semantic_property = prop.PropertySoupSemantic(start_config_property, rules)
     step_sync = StepSynchronousProduct(soup_semantic, soup_semantic_property)
-    transition_relation = STR2TR(step_sync)
+    transition_relation = sem.STR2TR(step_sync)
     dic_ = {}
     parent_trace_proxy = ParentTraceProxy(transition_relation, dic_)
     o = [None]
@@ -159,10 +158,10 @@ if __name__ == "__main__":
     def on_discovery(source, n, o) :
         if n.property_config.state :
             o[0] = n
-            soup_program_ = SoupProgram(n)
-            soup_semantic_ = SoupSemantic(soup_program)
+            soup_program_ = sem.SoupProgram(n)
+            soup_semantic_ = sem.SoupSemantic(soup_program)
             step_sync_ = StepSynchronousProduct(soup_semantic_, soup_semantic_property)
-            transition_relation_ = STR2TR(step_sync_)
+            transition_relation_ = sem.STR2TR(step_sync_)
             dic__ = {}
             parent_trace_proxy_ = ParentTraceProxy(transition_relation_, dic__)
             def on_discovery_(new_source, new_n, new_o):

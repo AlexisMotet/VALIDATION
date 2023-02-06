@@ -1,12 +1,13 @@
 from enum import Enum
 from copy import copy, deepcopy
-from semantic_transition_relation.semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR, RuleAbstract
+
+import semantic_transition_relation as sem
 
 class State(Enum):
     HOME = 0
     GARDEN = 1
     
-class AliceAndBobConfig(SoupConfig):
+class AliceAndBobConfig(sem.SoupConfig):
     def __init__(self, alice, bob):
         self.alice = alice
         self.bob = bob
@@ -30,28 +31,28 @@ class AliceAndBobConfig(SoupConfig):
     def __hash__(self) :
         return hash(frozenset([self.alice, self.bob]))
     
-class RuleAliceToGarden(RuleAbstract):
+class RuleAliceToGarden(sem.RuleAbstract):
     def __init__(self):
         super().__init__("alice to garden", lambda config : config.alice==State.HOME)
         
     def execute(self, new_config): 
         new_config.alice = State.GARDEN
     
-class RuleAliceToHome(RuleAbstract):
+class RuleAliceToHome(sem.RuleAbstract):
     def __init__(self):
         super().__init__("alice to home", lambda config : config.alice==State.GARDEN)
         
     def execute(self, new_config): 
         new_config.alice = State.HOME
     
-class RuleBobToGarden(RuleAbstract):
+class RuleBobToGarden(sem.RuleAbstract):
     def __init__(self):
         super().__init__("bob to garden", lambda config : config.bob==State.HOME)
         
     def execute(self, new_config): 
         new_config.bob = State.GARDEN
     
-class RuleBobToHome(RuleAbstract):
+class RuleBobToHome(sem.RuleAbstract):
     def __init__(self):
         super().__init__("bob to home", lambda config : config.bob==State.GARDEN)
         
@@ -61,13 +62,13 @@ class RuleBobToHome(RuleAbstract):
     
 if __name__=="__main__":
     config_start = AliceAndBobConfig(State.HOME, State.HOME)
-    program = SoupProgram(config_start)
+    program = sem.SoupProgram(config_start)
     program.add(RuleAliceToGarden())
     program.add(RuleAliceToHome())
     program.add(RuleBobToGarden())
     program.add(RuleBobToHome())
-    soup_semantic = SoupSemantic(program)
-    str2tr = STR2TR(soup_semantic)
+    soup_semantic = sem.SoupSemantic(program)
+    str2tr = sem.STR2TR(soup_semantic)
     def on_discovery(source, n, o) :
         print(n)
     str2tr.bfs(None, on_discovery=on_discovery)
@@ -94,13 +95,13 @@ if __name__=="__main__":
 
     """
     config_start = AliceAndBobConfig(State.HOME, State.HOME)
-    program = SoupProgram(config_start)
+    program = sem.SoupProgram(config_start)
     program.add(RuleAliceToGarden())
     program.add(RuleAliceToHome())
     program.add(RuleBobToGarden())
     program.add(RuleBobToHome())
-    soup_semantic = SoupSemantic(program)
-    str2tr = STR2TR(soup_semantic)
+    soup_semantic = sem.SoupSemantic(program)
+    str2tr = sem.STR2TR(soup_semantic)
     d = {}
     p = ParentTraceProxy(str2tr, d)
 
