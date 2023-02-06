@@ -46,7 +46,6 @@ class StepSynchronousProduct(SemanticTransitionRelation):
     # retourne une liste de regles : (model_step, property_rule)
     def enabled_rules(self, source):
         sync_rules = []
-        print(source)
         model_config, property_config = source.model_config, source.property_config
         model_rules = self.model.enabled_rules(model_config)
         n_model_rules = len(model_rules)
@@ -69,32 +68,30 @@ class StepSynchronousProduct(SemanticTransitionRelation):
         model_step, property_rule = sync_rule
         _, property_config = source.model_config, source.property_config
         targets = self.property_.execute(property_rule, model_step, property_config)
-        return [SyncConfig(model_step.target, target) for target in
-                targets]
+        return [SyncConfig(model_step.target, target) for target in targets]
 
 # class Test
 class MaConfig(SoupConfig):
-    def __init__(self, x, y):
+    def __init__(self, x):
         self.x = x
-        self.y = y
 
     def __copy__(self):
-        return MaConfig(copy(self.x), copy(self.y))
+        return MaConfig(copy(self.x))
 
     def __deepcopy__(self, memo=None):
-        return MaConfig(deepcopy(self.x, memo), deepcopy(self.y, memo))
+        return MaConfig(deepcopy(self.x, memo))
 
     def __eq__(self, other):
-        return self.x == other.x and self.y == other.y
+        return self.x == other.x
 
     def __hash__(self):
-        return hash(frozenset([self.x, self.y]))
+        return hash(frozenset([self.x]))
 
     def __str__(self):
-        return "Ma Config : %d %d" % (self.x, self.y)
+        return "Ma Config : %d" % (self.x)
 
     def __repr__(self):
-        return "Ma Config : %d %d" % (self.x, self.y)
+        return "Ma Config : %d" % (self.x)
 
 # Class Test
 class configProperty(SoupConfig):
@@ -123,11 +120,13 @@ class configProperty(SoupConfig):
 
 
 if __name__ == "__main__":
-    start_config = MaConfig(4, 2)
+    start_config = MaConfig(4)
     
-    def addition(config): config.x = config.x + config.y
+    def addition(config): 
+        config.x = config.x + 1
     
-    def soustraction(config): config.y = config.y - config.x
+    def soustraction(config): 
+        config.x = config.x - 1
     
     addition = RuleLambda("addition", lambda config : True, addition)
     multiplication = RuleLambda("multiplication", lambda config : True, soustraction)
@@ -147,25 +146,40 @@ if __name__ == "__main__":
         target.state = True
         target.pc +=1
          
-    rules.append(PropertyRuleLambda("x > 3", lambda model_step, target :
-        model_step.source.x > 8, etatTrue))
+    rules.append(PropertyRuleLambda("x == 6", lambda model_step, target :
+        model_step.source.x ==  6, etatTrue))
     
-    rules.append(PropertyRuleLambda("x <= 3", lambda model_step, target :
-        model_step.source.x <= 8, etatFalse))
+    rules.append(PropertyRuleLambda("x != 6", lambda model_step, target :
+        model_step.source.x != 6, etatFalse))
     
     soup_semantic_property = PropertySoupSemantic(start_config_property, rules)
     step_sync = StepSynchronousProduct(soup_semantic, soup_semantic_property)
-    tr = STR2TR(step_sync)
-    d = {}
-    p = ParentTraceProxy(tr, d)
+    transition_relation = STR2TR(step_sync)
+    dic_ = {}
+    parent_trace_proxy = ParentTraceProxy(transition_relation, dic_)
     o = [None]
 
     def on_discovery(source, n, o) :
-        if n.model_config.x > 10 or n.model_config.x < -10 :
+        if n.property_config.state :
             o[0] = n
+            soup_program_ = SoupProgram(n)
+            soup_semantic_ = SoupSemantic(soup_program)
+            step_sync_ = StepSynchronousProduct(soup_semantic_, soup_semantic_property)
+            transition_relation_ = STR2TR(step_sync_)
+            dic__ = {}
+            parent_trace_proxy_ = ParentTraceProxy(transition_relation_, dic__)
+            def on_discovery_(new_source, new_n, new_o):
+                new_o[0] = new_n
+                if new_n == n:
+                    print("cycle trouve")
+                    return True
+                return False
+            new_o = [None]
+            parent_trace_proxy_.bfs(o=new_o, on_discovery=on_discovery_)
+            parent_trace_proxy_.get_trace(new_o[0])
             return True
         return False
 
-    p.bfs(o=o, on_discovery=on_discovery)
-    res= p.get_trace(o[0])
+    parent_trace_proxy.bfs(o=o, on_discovery=on_discovery)
+    res = parent_trace_proxy.get_trace(o[0])
     
