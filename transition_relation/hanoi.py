@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from transition_relation.model import TransitionRelation, Config
 
+=======
+from transition_relation.graph import TransitionRelation
+from transition_relation.model import Config
+>>>>>>> c256c9aab89cc5390e1a8d3d97f4743b5051f23f
 
 class HanoiConfiguration(Config):
     def __init__(self, dict_ : dict):

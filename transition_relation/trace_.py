@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import transition_relation.model as model
+=======
+from transition_relation.model import TransitionRelation
+from transition_relation.nbits import NBits
+>>>>>>> c256c9aab89cc5390e1a8d3d97f4743b5051f23f
 
 
 class ParentTraceProxy(model.TransitionRelation):

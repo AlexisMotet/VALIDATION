@@ -149,11 +149,11 @@ class TestParentTraceProxy(TestCase):
 class TestPropertyComposition(TestCase):
     def setUp(self):
 
-        start_config = MaConfig(4, 2)
+        start_config = MaConfig(2)
 
-        def addition(config): config.x = config.x + config.y
+        def addition(config): config.x = config.x + 1
 
-        def soustraction(config): config.y = config.y - config.x
+        def soustraction(config): config.x = config.x - 1
 
         addition = RuleLambda("addition", lambda config: True, addition)
         multiplication = RuleLambda("multiplication", lambda config: True, soustraction)
@@ -174,11 +174,11 @@ class TestPropertyComposition(TestCase):
             target.state = True
             target.pc += 1
 
-        rules.append(PropertyRuleLambda("x > 3", lambda model_step, target:
-        model_step.source.x > 3, etatTrue))
+        rules.append(PropertyRuleLambda("x == 3", lambda model_step, target:
+        model_step.source.x == 3, etatTrue))
 
-        rules.append(PropertyRuleLambda("x <= 3", lambda model_step, target:
-        model_step.source.x <= 3, etatFalse))
+        rules.append(PropertyRuleLambda("x != 3", lambda model_step, target:
+        model_step.source.x != 3, etatFalse))
 
         self.soup_semantic_property = PropertySoupSemantic(start_config_property, rules)
 
@@ -198,7 +198,7 @@ class TestPropertyComposition(TestCase):
         p.bfs(o=o, on_discovery=on_discovery)
         res = p.get_trace(o[0])
 
-        assert res[0] == 'Le Noeud Model Config : [Ma Config : 4 2] Property Config : [config : [False pc=0]] mene au Noeud Model Config : [Ma Config : 6 2] Property Config : [config : [True pc=1]]'
+        assert res[0] == 'Le Noeud Model Config : [Ma Config : 4] Property Config : [config : [True pc=2]] mene au Noeud Model Config : [Ma Config : 5] Property Config : [config : [False pc=3]]'
 
 # __ALICE&BOB_DEADLOCK__________________________________________________________________
 
@@ -207,15 +207,15 @@ class TestAliceBobDeadLock(TestCase):
     Teste la classe AandB_deadlock
     """
     def setUp(self):
-        config_start = AliceAndBobConfig(State.HOME, State.HOME, False, False)
+        config_start = AandB_d.AliceAndBobConfig(AandB_d.State.HOME, AandB_d.State.HOME, False, False)
         self.program = SoupProgram(config_start)
         # Ajout des différentes règles
-        self.program.add(RuleAliceToGarden())
-        self.program.add(RuleAliceToHome())
-        self.program.add(RuleAliceToIntermediate())
-        self.program.add(RuleBobToGarden())
-        self.program.add(RuleBobToHome())
-        self.program.add(RuleBobToIntermediate())
+        self.program.add(AandB_d.RuleAliceToGarden())
+        self.program.add(AandB_d.RuleAliceToHome())
+        self.program.add(AandB_d.RuleAliceToIntermediate())
+        self.program.add(AandB_d.RuleBobToGarden())
+        self.program.add(AandB_d.RuleBobToHome())
+        self.program.add(AandB_d.RuleBobToIntermediate())
 
         # Semantic
         self.soup_semantic = SoupSemantic(self.program)
@@ -226,7 +226,7 @@ class TestAliceBobDeadLock(TestCase):
 
         # On discovery pour trouver le deadlock
         def on_discovery(source, n, o):
-            res = n.alice == State.INTERMEDIATE and n.bob == State.INTERMEDIATE
+            res = n.alice == AandB_d.State.INTERMEDIATE and n.bob == AandB_d.State.INTERMEDIATE
             if res: o[0] = n
             if len(o[1].enabled_rules(n)) == 0:
                 print("deadlock trouve pour la config : %s" % n)
@@ -239,10 +239,10 @@ class TestAliceBobDeadLock(TestCase):
     def test_alice_bob_deadlock(self):
         res = self.p.get_trace(self.o[2])
         print('res', res[0])
-        assert res[0] == 'Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]'
+        assert res[0] in ['Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]', 'Le Noeud [Alice State.HOME Flag False - Bob State.INTERMEDIATE Flag True] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]']
 
     def test_alice_bob_no_deadlock(self):
-        self.program.add(RuleBobIntermediateToHome())
+        self.program.add(AandB_d.RuleBobIntermediateToHome())
         self.soup_semantic = SoupSemantic(self.program)
         str2tr = STR2TR(self.soup_semantic)
         d = {}
@@ -258,19 +258,19 @@ class TestAliceBob(TestCase):
     Teste la classe AandB
     """
     def setUp(self):
-        config_start = ABconf(State.HOME, State.HOME)
+        config_start = AandB.AliceAndBobConfig(AandB.State.HOME, AandB.State.HOME)
         program = SoupProgram(config_start)
-        program.add(ratg())
-        program.add(rath())
-        program.add(rbtg())
-        program.add(rbth())
+        program.add(AandB.RuleAliceToGarden())
+        program.add(AandB.RuleAliceToHome())
+        program.add(AandB.RuleBobToGarden())
+        program.add(AandB.RuleBobToHome())
         soup_semantic = SoupSemantic(program)
         str2tr = STR2TR(soup_semantic)
         d = {}
         p = ParentTraceProxy(str2tr, d)
 
         def on_discovery(source, n, o):
-            res = n.alice == State.INTERMEDIATE and n.bob == State.INTERMEDIATE
+            res = n.alice == AandB.State.GARDEN and n.bob == AandB.State.GARDEN
             if res: o[0] = n
             return res
 
@@ -279,28 +279,28 @@ class TestAliceBob(TestCase):
         self.res = p.get_trace(o[0])
 
     def test_rule_alice_to_garden(self):
-        config_start = ABconf(State.HOME, State.HOME)
-        rule = ratg() #Alias de RuleAliceToGarden
+        config_start = AandB.AliceAndBobConfig(AandB.State.HOME, AandB.State.HOME)
+        rule = AandB.RuleAliceToGarden() #Alias de RuleAliceToGarden
         rule.execute(config_start)
-        assert ((config_start.alice == State.GARDEN) and (config_start.bob == State.HOME))
+        assert ((config_start.alice == AandB.State.GARDEN) and (config_start.bob == AandB.State.HOME))
 
     def test_rule_alice_to_home(self):
-        config_start = ABconf(State.GARDEN, State.HOME)
-        rule = rath() #Alias de RuleAliceToHome
+        config_start = AandB.AliceAndBobConfig(AandB.State.GARDEN, AandB.State.HOME)
+        rule = AandB.RuleAliceToHome() #Alias de RuleAliceToHome
         rule.execute(config_start)
-        assert config_start.alice == State.HOME and config_start.bob == State.HOME
+        assert config_start.alice == AandB.State.HOME and config_start.bob == AandB.State.HOME
 
     def test_rule_bob_to_garden(self):
-        config_start = ABconf(State.HOME, State.HOME)
-        rule = rbtg() #Alias de RuleAliceToHome
+        config_start = AandB.AliceAndBobConfig(AandB.State.HOME, AandB.State.HOME)
+        rule = AandB.RuleBobToGarden() #Alias de RuleAliceToHome
         rule.execute(config_start)
-        assert config_start.alice == State.HOME and config_start.bob == State.GARDEN
+        assert config_start.alice == AandB.State.HOME and config_start.bob == AandB.State.GARDEN
 
     def test_rule_bob_to_home(self):
-        config_start = ABconf(State.HOME, State.GARDEN)
-        rule = rbth() #Alias de RuleAliceToHome
+        config_start = AandB.AliceAndBobConfig(AandB.State.HOME, AandB.State.GARDEN)
+        rule = AandB.RuleBobToHome() #Alias de RuleAliceToHome
         rule.execute(config_start)
-        assert config_start.alice == State.HOME and config_start.bob == State.HOME
+        assert config_start.alice == AandB.State.HOME and config_start.bob == AandB.State.HOME
 
     def test_alice_bob(self):
        assert self.res[0] in ['Le Noeud Config : {Alice State.GARDEN - Bob State.HOME} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}', 'Le Noeud Config : {Alice State.HOME - Bob State.GARDEN} mene au Noeud Config : {Alice State.GARDEN - Bob State.GARDEN}' ]

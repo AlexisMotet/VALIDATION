@@ -2,7 +2,6 @@ from enum import Enum
 from copy import copy, deepcopy
 import semantic_transition_relation.semantic as semantic
 
-
 class State(Enum):
     HOME = 0
     INTERMEDIATE = 1
