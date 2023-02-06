@@ -12,7 +12,7 @@ Nous avons dans un premier temps cherché à modéliser un graph de POO. Pour ce
 
 Par exemple ``DictGraph([3], {3: [1, 2], 1: [3, 1], 2: [3]})`` représente ici :
 
-<p align="center"> <img src="img_1.png">
+<p align="center"> <img src="resources/img_1.png">
 
 Nous avons ensuite cherché à parcourir notre graphe dans ``TransitionRelation``, pour celà nous parcourons notre graphe en largeur dans ``bfs`` en marquant les nœuds les uns à la suite des autres lors de chaque visite.
 
@@ -21,7 +21,7 @@ Nous avons ensuite cherché à parcourir notre graphe dans ``TransitionRelation`
 Dans ``nbits`` nous avons cherché à modéliser à partir d'un graphe tout les mots binaires de nbits et les transitions de celui-ci en ne changeant qu'un bit à la fois.
 
 Dans ``hanoi`` nous avons cherché à résoudre le problème de la tour de hanoi en avec un nombre de disques variable et de tours variables.
-<p align="center"> <img src="img_2.png">
+<p align="center"> <img src="resources/img_2.png">
 
 Pour celà nous modélisons le tout par un graph en se fixant une condition sur la transition entre 2 configurations, un disque ne peut pas être au-dessus d'un disque plus petit.
 
@@ -52,7 +52,7 @@ Pour celà il faut :
 * Réaliser un click molette sur un nœud afin qu'il soit le départ de notre parcours de graph
 
 Nous pouvons enfin, clicker sur *run* pour pour voir le parcours du graph de manière graphique.
-<p align="center"> <img src="img.png">
+<p align="center"> <img src="resources/img.png">
 
 Des unitaires unitaires permettant une converture de 81% ont été réalisés.
 
