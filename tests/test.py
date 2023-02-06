@@ -14,7 +14,7 @@ from nbits import NBits
 from property import PropertyRuleLambda, PropertySoupSemantic
 from semantic import SoupProgram, SoupConfig, RuleLambda, SoupSemantic, STR2TR
 from trace_ import ParentTraceProxy
-from AandB import State
+# from AandB import State
 
 # pour run : python -m unittest test.py
 
@@ -226,7 +226,7 @@ class TestAliceBobDeadLock(TestCase):
 
         # On discovery pour trouver le deadlock
         def on_discovery(source, n, o):
-            res = n.alice == State.HOME and n.bob == State.HOME
+            res = n.alice == State.INTERMEDIATE and n.bob == State.INTERMEDIATE
             if res: o[0] = n
             if len(o[1].enabled_rules(n)) == 0:
                 print("deadlock trouve pour la config : %s" % n)
@@ -238,7 +238,8 @@ class TestAliceBobDeadLock(TestCase):
 
     def test_alice_bob_deadlock(self):
         res = self.p.get_trace(self.o[2])
-        assert res[0] == 'Le Noeud [Alice State.HOME Flag False - Bob State.HOME Flag False] mene au Noeud [Alice State.HOME Flag False - Bob State.HOME Flag False]'
+        print('res', res[0])
+        assert res[0] == 'Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]'
 
     def test_alice_bob_no_deadlock(self):
         self.program.add(RuleBobIntermediateToHome())
