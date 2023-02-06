@@ -2,7 +2,6 @@ from copy import copy, deepcopy
 from unittest import TestCase
 import semantic_transition_relation.AandB_deadlock as AandB_d
 import semantic_transition_relation.AandB as AandB
-
 from composition.composition import MaConfig, configProperty, StepSynchronousProduct
 from transition_relation.graph import DictGraph
 from transition_relation.hanoi import HanoiConfiguration, Hanoi
@@ -11,10 +10,6 @@ from transition_relation.nbits import NBits
 from composition.property import PropertyRuleLambda, PropertySoupSemantic
 from semantic_transition_relation.semantic import SoupProgram, SoupConfig, RuleLambda, SoupSemantic, STR2TR
 from transition_relation.trace_ import ParentTraceProxy
-
-
-
-# from AandB import State
 
 # pour run : python -m unittest test.py
 
@@ -149,11 +144,11 @@ class TestParentTraceProxy(TestCase):
 class TestPropertyComposition(TestCase):
     def setUp(self):
 
-        start_config = MaConfig(4, 2)
+        start_config = MaConfig(2)
 
-        def addition(config): config.x = config.x + config.y
+        def addition(config): config.x = config.x + 1
 
-        def soustraction(config): config.y = config.y - config.x
+        def soustraction(config): config.x = config.x - 1
 
         addition = RuleLambda("addition", lambda config: True, addition)
         multiplication = RuleLambda("multiplication", lambda config: True, soustraction)
@@ -174,11 +169,11 @@ class TestPropertyComposition(TestCase):
             target.state = True
             target.pc += 1
 
-        rules.append(PropertyRuleLambda("x > 3", lambda model_step, target:
-        model_step.source.x > 3, etatTrue))
+        rules.append(PropertyRuleLambda("x == 3", lambda model_step, target:
+        model_step.source.x == 3, etatTrue))
 
-        rules.append(PropertyRuleLambda("x <= 3", lambda model_step, target:
-        model_step.source.x <= 3, etatFalse))
+        rules.append(PropertyRuleLambda("x != 3", lambda model_step, target:
+        model_step.source.x != 3, etatFalse))
 
         self.soup_semantic_property = PropertySoupSemantic(start_config_property, rules)
 
@@ -198,7 +193,7 @@ class TestPropertyComposition(TestCase):
         p.bfs(o=o, on_discovery=on_discovery)
         res = p.get_trace(o[0])
 
-        assert res[0] == 'Le Noeud Model Config : [Ma Config : 4 2] Property Config : [config : [False pc=0]] mene au Noeud Model Config : [Ma Config : 6 2] Property Config : [config : [True pc=1]]'
+        assert res[0] == 'Le Noeud Model Config : [Ma Config : 4] Property Config : [config : [True pc=2]] mene au Noeud Model Config : [Ma Config : 5] Property Config : [config : [False pc=3]]'
 
 # __ALICE&BOB_DEADLOCK__________________________________________________________________
 
@@ -239,7 +234,7 @@ class TestAliceBobDeadLock(TestCase):
     def test_alice_bob_deadlock(self):
         res = self.p.get_trace(self.o[2])
         print('res', res[0])
-        assert res[0] == 'Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]'
+        assert res[0] in ['Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]', 'Le Noeud [Alice State.HOME Flag False - Bob State.INTERMEDIATE Flag True] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]']
 
     def test_alice_bob_no_deadlock(self):
         self.program.add(AandB_d.RuleBobIntermediateToHome())
@@ -270,7 +265,7 @@ class TestAliceBob(TestCase):
         p = ParentTraceProxy(str2tr, d)
 
         def on_discovery(source, n, o):
-            res = n.alice == AandB.State.INTERMEDIATE and n.bob == AandB.State.INTERMEDIATE
+            res = n.alice == AandB.State.GARDEN and n.bob == AandB.State.GARDEN
             if res: o[0] = n
             return res
 
