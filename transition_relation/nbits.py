@@ -1,4 +1,4 @@
-from graph import TransitionRelation
+from transition_relation.graph import TransitionRelation
 
 
 class NBits(TransitionRelation):

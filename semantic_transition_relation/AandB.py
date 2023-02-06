@@ -1,7 +1,6 @@
 from enum import Enum
-from semantic import RuleAbstract
 from copy import copy, deepcopy
-from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
+from semantic_transition_relation.semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR, RuleAbstract
 
 class State(Enum):
     HOME = 0

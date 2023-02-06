@@ -1,8 +1,6 @@
 from enum import Enum
-from semantic import RuleAbstract
 from copy import copy, deepcopy
-from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
-
+from semantic_transition_relation.semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR, RuleAbstract
 
 class State(Enum):
     HOME = 0
@@ -112,7 +110,7 @@ if __name__=="__main__":
     soup_semantic = SoupSemantic(program)
     str2tr = STR2TR(soup_semantic)
     
-    from trace_ import ParentTraceProxy
+    from transition_relation.trace_ import ParentTraceProxy
     d = {}
     p = ParentTraceProxy(str2tr, d)
     

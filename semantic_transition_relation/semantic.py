@@ -1,9 +1,7 @@
 from abc import abstractmethod, ABC
 from enum import Enum
-from model import TransitionRelation
+from transition_relation.model import TransitionRelation, Config
 from copy import deepcopy
-from model import Config
-
 
 class SemanticTransitionRelation(ABC):
     @abstractmethod

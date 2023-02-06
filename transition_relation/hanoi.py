@@ -1,5 +1,5 @@
-from graph import TransitionRelation
-from model import Config
+from transition_relation.graph import TransitionRelation
+from transition_relation.model import Config
 
 class HanoiConfiguration(Config):
     def __init__(self, d : dict):

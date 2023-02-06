@@ -1,5 +1,5 @@
-from model import TransitionRelation
-from nbits import NBits
+from transition_relation.model import TransitionRelation
+from transition_relation.nbits import NBits
 
 class ParentTraceProxy(TransitionRelation):
     def __init__(self, operand : TransitionRelation, dict : dict):

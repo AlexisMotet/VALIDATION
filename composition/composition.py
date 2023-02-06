@@ -1,10 +1,7 @@
-from semantic import SemanticTransitionRelation, Stutter
-from property import Step
-from semantic import SoupProgram, SoupSemantic, RuleLambda, SoupConfig
+from semantic_transition_relation.semantic import SoupProgram, SoupSemantic, RuleLambda, SoupConfig, STR2TR,SemanticTransitionRelation, Stutter
 from copy import copy, deepcopy
-from property import PropertySoupSemantic, PropertyRuleLambda
-from semantic import STR2TR
-from trace_ import ParentTraceProxy
+from composition.property import PropertySoupSemantic, PropertyRuleLambda, Step
+from transition_relation.trace_ import ParentTraceProxy
 
 
 class SyncConfig():

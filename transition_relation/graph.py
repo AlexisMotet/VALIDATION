@@ -1,4 +1,4 @@
-from model import TransitionRelation
+from transition_relation.model import TransitionRelation
 
 class DictGraph(TransitionRelation):
     def __init__(self, roots, d):
