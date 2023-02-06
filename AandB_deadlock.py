@@ -120,7 +120,7 @@ if __name__=="__main__":
     
     
     def on_discovery(source, n, o) :
-        res = n.alice == State.GARDEN and n.bob == State.GARDEN
+        res = n.alice == State.INTERMEDIATE and n.bob == State.INTERMEDIATE
         if res : o[0] = n
         if len(o[1].enabled_rules(n)) == 0 :
             print("deadlock trouve pour la config : %s" % n)

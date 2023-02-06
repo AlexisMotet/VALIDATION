@@ -226,7 +226,7 @@ class TestAliceBobDeadLock(TestCase):
 
         # On discovery pour trouver le deadlock
         def on_discovery(source, n, o):
-            res = n.alice == State.GARDEN and n.bob == State.GARDEN
+            res = n.alice == State.HOME and n.bob == State.HOME
             if res: o[0] = n
             if len(o[1].enabled_rules(n)) == 0:
                 print("deadlock trouve pour la config : %s" % n)
@@ -234,11 +234,11 @@ class TestAliceBobDeadLock(TestCase):
             return res
 
         self.p.bfs(self.o, on_discovery=on_discovery)
-        # self.res = self.p.get_trace(self.o[2])
+        self.res = self.p.get_trace(self.o[2])
 
     def test_alice_bob_deadlock(self):
         res = self.p.get_trace(self.o[2])
-        assert res[0] == 'Le Noeud [Alice State.INTERMEDIATE Flag True - Bob State.HOME Flag False] mene au Noeud [Alice State.INTERMEDIATE Flag True - Bob State.INTERMEDIATE Flag True]'
+        assert res[0] == 'Le Noeud [Alice State.HOME Flag False - Bob State.HOME Flag False] mene au Noeud [Alice State.HOME Flag False - Bob State.HOME Flag False]'
 
     def test_alice_bob_no_deadlock(self):
         self.program.add(RuleBobIntermediateToHome())
@@ -269,7 +269,7 @@ class TestAliceBob(TestCase):
         p = ParentTraceProxy(str2tr, d)
 
         def on_discovery(source, n, o):
-            res = n.alice == State.GARDEN and n.bob == State.GARDEN
+            res = n.alice == State.INTERMEDIATE and n.bob == State.INTERMEDIATE
             if res: o[0] = n
             return res
 
