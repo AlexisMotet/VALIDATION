@@ -1,6 +1,5 @@
-from abc import abstractmethod
-from copy import deepcopy
 from abc import abstractmethod, ABC
+from copy import deepcopy
 
 
 class Step():

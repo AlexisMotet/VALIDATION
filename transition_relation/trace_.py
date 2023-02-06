@@ -1,35 +1,39 @@
-from model import TransitionRelation
-from nbits import NBits
+import transition_relation.model as model
 
-class ParentTraceProxy(TransitionRelation):
-    def __init__(self, operand : TransitionRelation, dict : dict):
-        super(ParentTraceProxy, self).__init__()
+
+class ParentTraceProxy(model.TransitionRelation):
+    def __init__(self, operand : model.TransitionRelation):
+        super().__init__()
         self.operand = operand
-        self.dict = dict
+        self.dict_ = {}
     
     def get_roots(self):
         roots = self.operand.get_roots()
         for root in roots :
-            self.dict[root] = {}
+            self.dict_[root] = "ROOT"
         return roots
         
     def next(self, source):
         neighbours = self.operand.next(source)
         for neighbour in neighbours :
-            if neighbour not in self.dict :
-                self.dict[neighbour] = source
+            if neighbour not in self.dict_ :
+                self.dict_[neighbour] = source
         return neighbours
     
     def get_trace(self, target):
         trace = []
-        while target :
-            parent = self.dict[target]
-            trace.append("Le Noeud %s mene au Noeud %s" % (str(parent), str(target)))
+        while True :
+            parent = self.dict_[target]
+            if str(parent) == "ROOT" :
+                trace.append("Le noeud racine est \"%s\"" % str(target))
+                break
+            trace.append("Le noeud \"%s\" mene au noeud \"%s\"" % (str(parent), str(target)))
             target = parent
+            
         print("---------- TRACE ----------")
         for s in reversed(trace):
             print(s)
-        print("---------------------------")
+        print("-------- FIN TRACE --------")
         return trace             
         
         

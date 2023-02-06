@@ -1,7 +1,6 @@
 from enum import Enum
-from semantic import RuleAbstract
 from copy import copy, deepcopy
-from semantic import SoupConfig, SoupProgram, SoupSemantic, STR2TR
+import semantic_transition_relation.semantic as semantic
 
 
 class State(Enum):
@@ -9,7 +8,7 @@ class State(Enum):
     INTERMEDIATE = 1
     GARDEN = 2
     
-class AliceAndBobConfig(SoupConfig):
+class AliceAndBobConfig(semantic.SoupConfig):
     def __init__(self, alice, bob, flag_alice, flag_bob):
         self.alice = alice
         self.bob = bob
@@ -26,10 +25,10 @@ class AliceAndBobConfig(SoupConfig):
                                  deepcopy(self.flag_alice, memo),
                                  deepcopy(self.flag_bob, memo))
     def __str__(self):
-        return "[Alice %s Flag %s - Bob %s Flag %s]" % (self.alice, 
-                                                                 self.flag_alice,
-                                                                 self.bob, 
-                                                                 self.flag_bob)
+        return "Alice=%s flag_alice=%s Bob=%s flag_bob=%s" % (self.alice, 
+                                                                self.flag_alice,
+                                                                self.bob, 
+                                                                self.flag_bob)
     
     def __repr__(self):
         return self.__str__()
@@ -41,7 +40,7 @@ class AliceAndBobConfig(SoupConfig):
     def __hash__(self) :
         return hash(frozenset([self.alice, self.flag_alice, self.bob, self.flag_bob]))
     
-class RuleAliceToIntermediate(RuleAbstract):
+class RuleAliceToIntermediate(semantic.RuleAbstract):
     def __init__(self):
          super().__init__("alice to intermediate", 
                           lambda config : config.alice==State.HOME)
@@ -49,7 +48,7 @@ class RuleAliceToIntermediate(RuleAbstract):
         new_config.alice = State.INTERMEDIATE
         new_config.flag_alice = True
     
-class RuleAliceToGarden(RuleAbstract):
+class RuleAliceToGarden(semantic.RuleAbstract):
     def __init__(self):
         super().__init__("alice to garden", lambda config : 
             config.alice == State.INTERMEDIATE and config.flag_bob!=True)
@@ -57,7 +56,7 @@ class RuleAliceToGarden(RuleAbstract):
     def execute(self, new_config): 
         new_config.alice = State.GARDEN
     
-class RuleAliceToHome(RuleAbstract):
+class RuleAliceToHome(semantic.RuleAbstract):
     def __init__(self):
         super().__init__("alice to home", lambda config : config.alice==State.GARDEN)
 
@@ -65,7 +64,7 @@ class RuleAliceToHome(RuleAbstract):
         new_config.alice = State.HOME
         new_config.flag_alice = False
     
-class RuleBobToIntermediate(RuleAbstract):
+class RuleBobToIntermediate(semantic.RuleAbstract):
     def __init__(self):
          super().__init__("bob to intermediate", 
                           lambda config : config.bob==State.HOME)
@@ -73,7 +72,7 @@ class RuleBobToIntermediate(RuleAbstract):
         new_config.bob = State.INTERMEDIATE
         new_config.flag_bob = True
     
-class RuleBobToGarden(RuleAbstract):
+class RuleBobToGarden(semantic.RuleAbstract):
     def __init__(self):
         super().__init__("bob to garden", lambda config : 
             config.bob == State.INTERMEDIATE and config.flag_alice!=True)
@@ -81,7 +80,7 @@ class RuleBobToGarden(RuleAbstract):
     def execute(self, new_config): 
         new_config.bob = State.GARDEN
     
-class RuleBobToHome(RuleAbstract):
+class RuleBobToHome(semantic.RuleAbstract):
     def __init__(self):
         super().__init__("bob to home", lambda config : config.bob==State.GARDEN)
         
@@ -89,7 +88,7 @@ class RuleBobToHome(RuleAbstract):
         new_config.bob = State.HOME
         new_config.flag_bob = False
     
-class RuleBobIntermediateToHome(RuleAbstract):
+class RuleBobIntermediateToHome(semantic.RuleAbstract):
     def __init__(self):
         super().__init__("bob to intermediate from home", 
                          lambda config : config.bob==State.INTERMEDIATE
@@ -98,36 +97,3 @@ class RuleBobIntermediateToHome(RuleAbstract):
     def execute(self, new_config): 
         new_config.bob = State.HOME
         new_config.flag_bob = False
-    
-if __name__=="__main__":
-    config_start = AliceAndBobConfig(State.HOME, State.HOME, False, False)
-    program = SoupProgram(config_start)
-    program.add(RuleAliceToGarden())
-    program.add(RuleAliceToHome())
-    program.add(RuleAliceToIntermediate())
-    program.add(RuleBobToGarden())
-    program.add(RuleBobToHome())
-    program.add(RuleBobToIntermediate())
-    # program.add(RuleBobIntermediateToHome())
-    soup_semantic = SoupSemantic(program)
-    str2tr = STR2TR(soup_semantic)
-    
-    from trace_ import ParentTraceProxy
-    d = {}
-    p = ParentTraceProxy(str2tr, d)
-    
-    o = [None, soup_semantic, None]
-    
-    
-    def on_discovery(source, n, o) :
-        res = n.alice == State.GARDEN and n.bob == State.GARDEN
-        if res : o[0] = n
-        if len(o[1].enabled_rules(n)) == 0 :
-            print("deadlock trouve pour la config : %s" % n)
-            o[2] = n
-        return res
-    
-    p.bfs(o, on_discovery=on_discovery)
-    res= p.get_trace(o[2])
-
-    print(res)

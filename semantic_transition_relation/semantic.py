@@ -1,8 +1,6 @@
 from abc import abstractmethod, ABC
-from enum import Enum
-from model import TransitionRelation
+import transition_relation.model as model
 from copy import deepcopy
-from model import Config
 
 
 class SemanticTransitionRelation(ABC):
@@ -15,8 +13,9 @@ class SemanticTransitionRelation(ABC):
     @abstractmethod
     def execute(self, rule, source) : pass
     
-class STR2TR(TransitionRelation):
+class STR2TR(model.TransitionRelation):
     def __init__(self, semantic):
+        super().__init__()
         self.semantic = semantic
     def get_roots(self):
         return self.semantic.initial_configurations()
@@ -52,7 +51,6 @@ class RuleLambda(RuleAbstract):
         self.action(config)
         return [config]
 
-
 class Stutter(RuleAbstract):
     def __init__(self):
         super().__init__(None, None)
@@ -60,7 +58,7 @@ class Stutter(RuleAbstract):
     def execute(self, config):
         return [config]
 
-class SoupConfig(Config):
+class SoupConfig(model.Config):
     @abstractmethod
     def __copy__(self): 
         pass

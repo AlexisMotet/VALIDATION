@@ -1,7 +1,7 @@
 from copy import copy, deepcopy
 from unittest import TestCase
 from AandB_deadlock import AliceAndBobConfig, RuleAliceToGarden, RuleAliceToHome, State, RuleBobToGarden, RuleAliceToIntermediate, RuleBobToHome, RuleBobToIntermediate, RuleBobIntermediateToHome
-from AandB import AliceAndBobConfig as ABconf
+from semantic_transition_relation.AandB import AliceAndBobConfig as ABconf
 from AandB import RuleAliceToGarden as ratg
 from AandB import RuleAliceToHome as rath
 from AandB import RuleBobToGarden as rbtg

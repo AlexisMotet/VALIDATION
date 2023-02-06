@@ -1,26 +1,28 @@
-from graph import TransitionRelation
-from model import Config
+from transition_relation.model import TransitionRelation, Config
+
 
 class HanoiConfiguration(Config):
-    def __init__(self, d : dict):
-        self.d = d
-        for l in d.values():
+    def __init__(self, dict_ : dict):
+        super().__init__()
+        self.dict_ = dict_
+        for l in dict_.values():
             assert all(l[i] > l[i + 1] for i in range(len(l) - 1))
 
     def __hash__(self):
-        return hash(frozenset(self.d))
+        return hash(frozenset(self.dict_))
 
     def __str__(self):
-        return str(self.d)
+        return str(self.dict_)
 
     def __repr__(self):
         return self.__str__()
 
     def __eq__(self, other_config):
-        return self.d == other_config.d
+        return self.dict_ == other_config.dict_
 
 class Hanoi(TransitionRelation):
-    def __init__(self, roots):
+    def __init__(self, roots : list):
+        super().__init__()
         self.roots = roots
 
     def get_roots(self):
@@ -28,14 +30,14 @@ class Hanoi(TransitionRelation):
 
     def next(self, source : HanoiConfiguration):
         childs = []
-        for old in source.d:
-            if len(source.d[old]) == 0:
+        for old in source.dict_:
+            if len(source.dict_[old]) == 0:
                 continue
-            for new in source.d:
+            for new in source.dict_:
                 if new == old:
                     continue
-                if len(source.d[new]) == 0 or source.d[new][-1] > source.d[old][-1]:
-                    child = HanoiConfiguration({x: [y for y in source.d[x]] for x in source.d})
-                    child.d[new].append(child.d[old].pop())
+                if len(source.dict_[new]) == 0 or source.dict_[new][-1] > source.dict_[old][-1]:
+                    child = HanoiConfiguration({x: [y for y in source.dict_[x]] for x in source.dict_})
+                    child.dict_[new].append(child.dict_[old].pop())
                     childs.append(child)
         return childs

@@ -1,8 +1,9 @@
-from graph import TransitionRelation
+from transition_relation.model import TransitionRelation
 
 
 class NBits(TransitionRelation):
     def __init__(self, roots, n):
+        super().__init__()
         self.roots = roots
         self.n = n
 
