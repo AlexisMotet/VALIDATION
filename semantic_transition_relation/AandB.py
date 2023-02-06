@@ -1,7 +1,7 @@
 from enum import Enum
 from copy import copy, deepcopy
 
-import semantic_transition_relation as sem
+import semantic_transition_relation.semantic as sem
 
 class State(Enum):
     HOME = 0
