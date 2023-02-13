@@ -11,7 +11,7 @@ Il y a trois types de graphes différents qui peuvent être créés et parcourus
 
 Pour le graphe basé sur un dictionnaire, nous avons implémenté une interface graphique avec PyQt6 ("app.py", "python app.py" pour l'exécuter). On utilise la souris pour placer des noeuds et les retirer, pour les mettre en racine ou non, et pour les relier entre eux. Lorsque le graphe est dessiné, on peut le parcourir en cliquant sur "run".
 
-<p align="center"> <img src="resources/img.png">
+<p align="center"> <img src="teo.png">
 
 On peut chercher un noeud vérifiant un prédicat et afficher la trace menant au noeud désiré grâce à la classe ParentTraceProxy qui se comporte comme un wrapper du graphe à parcourir.
 
