@@ -9,7 +9,7 @@ Il y a trois types de graphes différents qui peuvent être créés et parcourus
 - Hanoi, où chaque noeud du graphe correspond à un état du jeu
 - NBits, où la racine du graphe est un nombre binaire sur n bits et où les enfants sont des répliques de leur parent avec un unique bit flippé (01 a pour enfants 11 et 00)
 
-Pour le graphe basé sur un dictionnaire, nous avons implémenté une interface graphique avec PyQt6 ("app.py"). On utilise la souris pour placer des noeuds et les retirer, pour les mettre en racine ou non, et pour les relier entre eux. Lorsque le graphe est dessiné, on peut le parcourir en cliquant sur "run".
+Pour le graphe basé sur un dictionnaire, nous avons implémenté une interface graphique avec PyQt6 ("app.py", "python app.py" pour l'exécuter). On utilise la souris pour placer des noeuds et les retirer, pour les mettre en racine ou non, et pour les relier entre eux. Lorsque le graphe est dessiné, on peut le parcourir en cliquant sur "run".
 
 <p align="center"> <img src="resources/img.png">
 
