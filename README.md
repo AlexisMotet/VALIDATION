@@ -1,61 +1,40 @@
 # Projet Validation - ENSTA Bretagne
-*MOTET Alexi - HOARAU William - BERTELOOT Emile*
+*MOTET Alexis - HOARAU William - BERTELOOT Emile*
 
 ### Description
-Notre projet de validation réalisé lors de notre 3ème année à l'ENSTA Bretagne 
-dans la filière CSN et a pour but de réaliser un simulateur de programmation par contrainte.
+Ce travail porte sur le parcours de graphe et le modèle checking.
 
-Pour réaliser celà nous avons travaillé par étape :
+Il y a trois types de graphes différents qui peuvent être créés et parcourus (ils héritent de TransitionRelation) :
+- DictGraph, graphe basé sur un ensemble clé-valeur avec pour clé un noeud "source" et pour valeur une liste de noeuds "destination"
+- Hanoi, où chaque noeud du graphe correspond à un état du jeu
+- NBits, où la racine du graphe est un nombre binaire sur n bits et où les enfants sont des répliques de leur parent avec un unique bit flippé (01 a pour enfants 11 et 00)
 
-#### Model & Graph
-Nous avons dans un premier temps cherché à modéliser un graph de POO. Pour celà, nous avons créé la classe *DictGraph* qui contient le nom du nœud racine *self.roots* et *self.d* représentant les transitions au sein du graph modélisé grâce à un dictionnaire.
+Pour le graphe basé sur un dictionnaire, nous avons implémenté une interface graphique avec PyQt6 ("app.py"). On utilise la souris pour placer des noeuds et les retirer, pour les mettre en racine ou non, et pour les relier entre eux. Lorsque le graphe est dessiné, on peut le parcourir en cliquant sur "run".
 
-Par exemple ``DictGraph([3], {3: [1, 2], 1: [3, 1], 2: [3]})`` représente ici :
-
-<p align="center"> <img src="resources/img_1.png">
-
-Nous avons ensuite cherché à parcourir notre graphe dans ``TransitionRelation``, pour celà nous parcourons notre graphe en largeur dans ``bfs`` en marquant les nœuds les uns à la suite des autres lors de chaque visite.
-
-#### Des exemples : nbits & hanoi
-
-Dans ``nbits`` nous avons cherché à modéliser à partir d'un graphe tout les mots binaires de nbits et les transitions de celui-ci en ne changeant qu'un bit à la fois.
-
-Dans ``hanoi`` nous avons cherché à résoudre le problème de la tour de hanoi en avec un nombre de disques variable et de tours variables.
-<p align="center"> <img src="resources/img_2.png">
-
-Pour celà nous modélisons le tout par un graph en se fixant une condition sur la transition entre 2 configurations, un disque ne peut pas être au-dessus d'un disque plus petit.
-
-#### Avoir une Trace
-
-``trace_`` nous permet de visualiser les transitions d'une configuration (nœud) à une autre en ligne de commande.
-
-#### Semantic  : Alice & Bob
-
-Nous avons cherché à implémenter des transitions avec une garde modélisée par une lambada fonction pour renvoyer un booléen et une action modélisée par une lambda fonction modifiant les variables de la Configuration. Cette logique est implémentée dans ``semantic``.
-
-Nous avons ensuite cherché à modéliser l'exemple d'Alice & Bob qui représente l'accès mutuel à une ressource critique dans ``AandB``.
-Une deuxième version ``AandB_deadlock`` permet de résoudre le problème de *deadlock*, le moment où Alice et Bob demandent à rentrer en section critique en même temps. Pour celà on rajoute une règle pour laquelle Bob à la droit de changer d'avis en revenant à son état initial.
-
-#### Composition : Se déplacer dans 2 graphes avec les mêmes variables
-
-``property``
-
-#### BONUS - Interface Graphique & Test Unitaire
-
-Nous avons créer une interface graphique permettant à l'utlisateur de créer son propre graph et de montrer son parcours par un parcours en largeur (*Breadth-First Search* - bfs).
-
-Pour celà il faut :
-
-* Clicker sur *Link*
-* Puis n'importe où dans la fenêtre blanche pour y ajouter un nœud
-* Clicker de nœud en nœud pour y ajouter des liens
-* Réaliser un click molette sur un nœud afin qu'il soit le départ de notre parcours de graph
-
-Nous pouvons enfin, clicker sur *run* pour pour voir le parcours du graph de manière graphique.
 <p align="center"> <img src="resources/img.png">
 
-Des unitaires unitaires permettant une converture de 81% ont été réalisés.
+On peut chercher un noeud vérifiant un prédicat et afficher la trace menant au noeud désiré grâce à la classe ParentTraceProxy qui se comporte comme un wrapper du graphe à parcourir.
 
-Aucun animal n'a été maltraité lors de la réalistion de ce projet.
+Nous avons aussi implémenté un type de graphe plus abstrait, où les noeuds sont des configurations, dépendant d'un langage qu'on décrit avec des règles qui nous indiquent quand est-ce qu'on peut passer d'une configuration à une autre (garde) et de quelle façon la configuration est modifiée (exécution). 
 
-C'est nous qui avons prété notre chargeur USB-C quand vous étiez dans le besoin.
+Nous avons testé notre langage sur le fameux problème d'Alice et Bob. Dans le cas le plus simple, la configuration est composée des états d'Alice et de Bob (état Jardin ou Maison), il existe quatre règles pouvant être exécutées : AliceToHome (à condition qu'elle soit dans le jardin), AliceToGarden (à condition qu'elle soit chez elle), et réciproquement pour Bob.
+
+Enfin, on a testé un modèle checker sur un mini-programme de notre invention, qui peut ajouter ou soustraire 1 à une variable x. Le modèle checker regarde si la variable est bien égale à une variable n à un moment donné, puis vérifie qu'il y a bien un cycle à partir de l'état d'acceptation trouvé. Il y a au moins un cycle car si x + 1 mène vers un état d'acceptation avec x + 1 + 1 - 1 mène vers x + 1 sans passer par x. A méditer.
+
+Pour voir une démo du travail réalisé, il faut utiliser le framework de tests "unittest" qui est inclus avec Python.
+
+Pour voir toutes les démos :
+
+"python -m unittest demo"
+
+Pour voir une démo particulière :
+
+"python -m unittest demo.DemoComposition.test_composition"
+
+
+
+
+
+Nous tenions à rappeler au lecteur de façon toute amicale que nous lui avions cordialement prêté et avec plaisir un chargeur USB-C lors de la dernière séance, séance durant laquelle nous avions amené quelques gourmandises dont nous croyons qu'elles n'ont point déplues au lecteur qui reste le maître de la notation de ce projet.
+
+Nous voulions aussi vous préciser que nous avions malheureusement été gênés dans notre travail par un groupe d'énergumènes perturbateurs qui s'est amusé à imiter le singe et le cochon alors que nous cherchions silence et sérénité afin de parcourir nos graphes en paix. Voulant toutefois préserver une certaine cohésion et unité de classe, nous tairons leurs noms mais nous tenions à vous préciser leurs initiales et leur nationalités : S. N. (Français), Y. K. (Marocain), S. N. (Marocaine). Au lecteur de juger quelles sanctions seront appropriées à ces bachibouzouks, mais nous jugeons qu'un retrait d'un nombre entier de points supérieur à deux serait de bonne augure pour l'équilibre général des notes de notre filière.
