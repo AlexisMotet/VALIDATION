@@ -35,5 +35,3 @@ Le projet comporte aussi des tests unitaires qui sont contenus dans le fichier "
 
 
 Nous tenions à rappeler au lecteur de façon toute amicale que nous lui avions cordialement prêté et avec plaisir un chargeur USB-C lors de la dernière séance, séance durant laquelle nous avions amené quelques gourmandises dont nous croyons qu'elles n'ont point déplues au lecteur qui reste le maître de la notation de ce projet.
-
-Nous voulions aussi vous préciser que nous avions malheureusement été gênés dans notre travail par un groupe d'énergumènes perturbateurs qui s'est amusé à imiter le singe et le cochon alors que nous cherchions silence et sérénité afin de parcourir nos graphes en paix. Voulant toutefois préserver une certaine cohésion et unité de classe, nous tairons leurs noms mais nous tenions à vous préciser leurs initiales et leur nationalités : S. N. (Français), Y. K. (Marocain), S. N. (Marocaine). Au lecteur de juger quelles sanctions seront appropriées à ces bachibouzouks, mais nous jugeons qu'un retrait d'un nombre entier de points supérieur à deux serait de bonne augure pour l'équilibre général des notes de notre filière.
