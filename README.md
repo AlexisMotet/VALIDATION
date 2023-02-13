@@ -1,5 +1,5 @@
 # Projet Validation - ENSTA Bretagne
-*MOTET Alexis - HOARAU William - BERTELOOT Emile*
+*HOARAU William - BERTELOOT Emile - MOTET Alexis*
 
 ### Description
 Ce travail porte sur le parcours de graphe et le modèle checking.
@@ -21,7 +21,7 @@ Nous avons testé notre langage sur le fameux problème d'Alice et Bob. Dans le 
 
 Enfin, on a testé un modèle checker sur un mini-programme de notre invention, qui peut ajouter ou soustraire 1 à une variable x. Le modèle checker regarde si la variable est bien égale à une variable n à un moment donné, puis vérifie qu'il y a bien un cycle à partir de l'état d'acceptation trouvé. Il y a au moins un cycle car si x + 1 mène vers un état d'acceptation avec x + 1 + 1 - 1 mène vers x + 1 sans passer par x. A méditer.
 
-Pour voir une démo du travail réalisé, il faut utiliser le framework de tests "unittest" qui est inclus avec Python.
+Pour voir une démo du travail réalisé, il faut utiliser le framework de tests unittest qui est inclus avec Python.
 
 Pour voir toutes les démos :
 
@@ -31,8 +31,7 @@ Pour voir une démo particulière :
 
 "python -m unittest demo.DemoComposition.test_composition"
 
-
-
+Le projet comporte aussi des tests unitaires qui sont contenus dans le fichier "test.py", ils doivent aussi être lancés avec unittest.
 
 
 Nous tenions à rappeler au lecteur de façon toute amicale que nous lui avions cordialement prêté et avec plaisir un chargeur USB-C lors de la dernière séance, séance durant laquelle nous avions amené quelques gourmandises dont nous croyons qu'elles n'ont point déplues au lecteur qui reste le maître de la notation de ce projet.
