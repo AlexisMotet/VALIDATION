@@ -1,7 +1,6 @@
 # Projet Validation - ENSTA Bretagne
 *HOARAU William - BERTELOOT Emile - MOTET Alexis*
 
-### Description
 Ce travail porte sur le parcours de graphe et le modèle checking.
 
 Il y a trois types de graphes différents qui peuvent être créés et parcourus (ils héritent de TransitionRelation) :
