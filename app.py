@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtTest import *
-from graph import DictGraph
+from transition_relation.graph import DictGraph
 import numpy as np
 # https://www.thomaspietrzak.com/teaching/IHM/pyqt2.pdf
 
